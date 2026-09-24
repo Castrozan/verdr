@@ -142,6 +142,15 @@ export const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({
       ...hermesFields,
+      kind: z.literal("hermes-mcp"),
+      server: z.string().min(1),
+      tool: z.string().min(1),
+      arguments: z.record(z.string(), z.unknown()).default({}),
+    })
+    .strict(),
+  z
+    .object({
+      ...hermesFields,
       kind: z.literal("hermes-skill"),
       skill: z.string().min(1),
     })

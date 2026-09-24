@@ -5,17 +5,20 @@ if (process.env.VERDR_TEST_MCP_STARTUP_FILE)
   writeFileSync(process.env.VERDR_TEST_MCP_STARTUP_FILE, "started");
 
 setInterval(() => undefined, 1000);
+let clientCapabilities = {};
 
 for await (const line of createInterface({ input: process.stdin })) {
   const request = JSON.parse(line);
   if (request.id === undefined) continue;
   let result = {};
-  if (request.method === "initialize")
+  if (request.method === "initialize") {
+    clientCapabilities = request.params.capabilities;
     result = {
       protocolVersion: request.params.protocolVersion,
       capabilities: { tools: {} },
       serverInfo: { name: "native-probe", version: "1.0.0" },
     };
+  }
   if (request.method === "tools/list")
     result = {
       tools: [
@@ -37,6 +40,7 @@ for await (const line of createInterface({ input: process.stdin })) {
       structuredContent: {
         processId: process.pid,
         token: behavior.prefix + request.params.arguments.token,
+        clientCapabilities,
       },
       content: [
         {
