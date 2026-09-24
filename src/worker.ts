@@ -69,7 +69,8 @@ async function execute() {
   }
   if (
     evaluation.kind === "hermes-discovery" ||
-    evaluation.kind === "hermes-skill"
+    evaluation.kind === "hermes-skill" ||
+    evaluation.kind === "hermes-mcp"
   ) {
     const { inspectHermes } = await import("./native/hermes/skills.js");
     return inspectHermes(evaluation, input);

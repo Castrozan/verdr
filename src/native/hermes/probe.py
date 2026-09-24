@@ -3,6 +3,7 @@ import importlib.metadata
 import json
 import os
 import platform
+import runpy
 import sys
 from pathlib import Path
 
@@ -121,4 +122,8 @@ if request.get("skill"):
             },
         }
     )
+if request.get("server"):
+    invoke = runpy.run_path(str(Path(__file__).with_name("mcp.py")))["invoke"]
+    output, invocation = invoke(manager, package_root, request)
+    evidence.update(invocation)
 print(json.dumps({"output": output or json.dumps(evidence), "metadata": evidence}))

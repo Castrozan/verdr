@@ -43,7 +43,7 @@ jobs:
           git -C "$RUNNER_TEMP/hermes-source" remote add origin https://github.com/NousResearch/hermes-agent.git
           git -C "$RUNNER_TEMP/hermes-source" fetch --depth=1 origin d337b736aa1e8ebecfab043842d13e4a2d2f48a3
           git -C "$RUNNER_TEMP/hermes-source" checkout --detach FETCH_HEAD
-          UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/hermes-environment" uv sync --project "$RUNNER_TEMP/hermes-source" --python 3.12 --locked --no-default-groups
+          UV_PROJECT_ENVIRONMENT="$RUNNER_TEMP/hermes-environment" uv sync --project "$RUNNER_TEMP/hermes-source" --python 3.12 --locked --no-default-groups --extra mcp
           echo "VERDR_HERMES_PYTHON=$RUNNER_TEMP/hermes-environment/bin/python3" >> "$GITHUB_ENV"
       - name: Verify native discovery and skill invocation without model credentials
         run: npm run test:native

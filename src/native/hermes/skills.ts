@@ -9,7 +9,7 @@ import type { EvaluationCase, Suite } from "../../suite/schema.js";
 export async function inspectHermes(
   evaluation: Extract<
     EvaluationCase,
-    { kind: "hermes-discovery" | "hermes-skill" }
+    { kind: "hermes-discovery" | "hermes-skill" | "hermes-mcp" }
   >,
   input: {
     root: string;
@@ -42,6 +42,13 @@ export async function inspectHermes(
         registration,
         skill:
           evaluation.kind === "hermes-skill" ? evaluation.skill : undefined,
+        ...(evaluation.kind === "hermes-mcp"
+          ? {
+              server: evaluation.server,
+              tool: evaluation.tool,
+              arguments: evaluation.arguments,
+            }
+          : {}),
       }),
       ...input.limits,
       group: false,
