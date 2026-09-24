@@ -75,6 +75,26 @@ export const evaluationCase = z.discriminatedUnion("kind", [
     .strict(),
   z
     .object({
+      ...caseFields,
+      kind: z.literal("opencode-discovery"),
+      package: relativeArtifactPath,
+      configuration: relativeArtifactPath,
+      executable: z.string().default("opencode"),
+    })
+    .strict(),
+  z
+    .object({
+      ...caseFields,
+      kind: z.literal("opencode-skill"),
+      package: relativeArtifactPath,
+      configuration: relativeArtifactPath,
+      executable: z.string().default("opencode"),
+      skill: z.string().min(1),
+      agent: z.string().default("build"),
+    })
+    .strict(),
+  z
+    .object({
       ...nativeFields,
       kind: z.literal("codex-discovery"),
       executable: z.string().default("codex"),

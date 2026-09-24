@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx --test test/*.test.ts",
-    "test:native": "node --import tsx --test test/native.integration.ts test/claude.native.integration.ts",
+    "test:native": "node --import tsx --test test/native.integration.ts test/claude.native.integration.ts test/opencode.native.integration.ts",
     "check": "tsc --noEmit && prettier --check .",
     "format": "prettier --write ."
   },
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@anthropic-ai/claude-code": "2.1.280",
     "@types/node": "22.20.3",
+    "opencode-ai": "1.18.32",
     "prettier": "3.9.7",
     "tsx": "4.23.13",
     "typescript": "5.9.3"
