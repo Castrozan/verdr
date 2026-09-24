@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 provisional Pi and Hermes production MCP",
+  "artifact": {
+    "root": "/nix/store/m8sl8lq238zdlg6q4d6vy2g59vc1x97r-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "provisional-unpublished-not-deployed",
+      "producerVersion": "1.0.0+899fa52f618d",
+      "piRuntimeScope": "verified-system-selected-runtime-not-deployed",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "digest": "4f2b88e6b85d84346084a2bfe206ae94dae78d0b030eb921ebca685f5f677a0c",
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "pi-production-sonarqube",
+      "kind": "pi-mcp",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "server": "dotfiles__sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "disabledServers": ["dotfiles__chrome-devtools"],
+      "assert": [
+        {
+          "type": "is-json"
+        },
+        {
+          "type": "contains",
+          "value": "\"isError\":false"
+        },
+        {
+          "type": "regex",
+          "value": "\"key\"\\s*:\\s*\"py\"\\s*,\\s*\"name\"\\s*:\\s*\"Python\""
+        }
+      ]
+    },
+    {
+      "package": "plugin",
+      "registration": ".hermes/plugins/dotfiles",
+      "python": "/nix/store/7nv87ahk1ll96dqdj1p31wf7al4n1z63-hermes-agent-env/bin/python3",
+      "id": "hermes-production-sonarqube",
+      "kind": "hermes-mcp",
+      "server": "sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "is-json"
+        },
+        {
+          "type": "regex",
+          "value": "\\\\\"key\\\\\"\\s*:\\s*\\\\\"py\\\\\",(?:\\s|\\\\n|\\\\r)*\\\\\"name\\\\\"\\s*:\\s*\\\\\"Python\\\\\""
+        }
+      ]
+    }
+  ]
+}
