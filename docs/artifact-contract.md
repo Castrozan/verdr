@@ -69,6 +69,8 @@ Installed native copies live outside the bundle. Capture their identity, effecti
 
 An isolated user profile can still inherit system-managed instructions and hooks. Record the effective host configuration and distinguish package behavior from host behavior; a fresh home directory alone does not establish isolation.
 
+Claude's native session may resolve a local marketplace plugin directly to the emitted package even when `plugin list --json` reports a cache path. The `claude-discovery` adapter measures both trees, records the root returned by the SDK's native plugin reload, and accepts only the emitted root or that installation's cache root with matching digests. Namespaced commands include skills and legacy commands; agents are reported separately. MCP statuses do not prove tool invocation. The probe sends only SDK control requests, and does not measure instruction adherence, task success, or hook execution.
+
 OpenCode embeds bundle paths and must consume the bundle in place. Its mutable plugin state is outside the bundle under the target profile's state directory. Each independent trial gets fresh state; persistence is exercised only by cases that declare it.
 
 Source identity for a local CLI input consists of manifest identity and source bytes unless the caller supplies a pinned source reference. Nix adds derivation/store identity and locked renderer dependencies. Verdr records these inputs without inventing a source URL or commit. Composition order, merging, conflict policy, installation, and rollback belong to deployment, not this single-package builder.
