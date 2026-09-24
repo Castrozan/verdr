@@ -67,6 +67,10 @@ async function execute() {
     const { inspectPi } = await import("./native/pi/skills.js");
     return inspectPi(evaluation, input);
   }
+  if (evaluation.kind === "pi-mcp") {
+    const { callPiTool } = await import("./native/pi/mcp.js");
+    return callPiTool(evaluation, input);
+  }
   if (
     evaluation.kind === "hermes-discovery" ||
     evaluation.kind === "hermes-skill" ||

@@ -16,14 +16,14 @@ import { digest } from "../../src/artifact.js";
 import { runSuite } from "../../src/runner.js";
 import { assertNativeProcessExited } from "./process.js";
 
-test("Hermes invokes only the selected native MCP server, cleans up children, and rejects errors and corrupt output despite an enabled ambient plugin", async (context) => {
-  const root = await mkdtemp(join(tmpdir(), "verdr-hermes-mcp-"));
+test("Pi invokes its native MCP adapter, excludes servers before startup, and rejects errors and corrupt output despite a trusted ambient plugin", async (context) => {
+  const root = await mkdtemp(join(tmpdir(), "verdr-pi-mcp-"));
   context.after(() => rm(root, { recursive: true, force: true }));
   const artifact = join(root, "emitted");
   const packageRoot = join(artifact, "plugin");
   await mkdir(packageRoot, { recursive: true });
-  await mkdir(join(artifact, ".hermes/plugins"), { recursive: true });
-  await symlink("../../plugin", join(artifact, ".hermes/plugins/native-mcp"));
+  await mkdir(join(artifact, ".pi/plugins"), { recursive: true });
+  await symlink("../../plugin", join(artifact, ".pi/plugins/native-mcp"));
   await writeFile(
     join(packageRoot, "plugin.json"),
     JSON.stringify({
@@ -32,10 +32,8 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
       version: "1.0.0",
     }),
   );
-  await copyFile(
-    new URL("mcp-server.mjs", import.meta.url),
-    join(packageRoot, "server.mjs"),
-  );
+  const server = join(packageRoot, "server.mjs");
+  await copyFile(new URL("mcp-server.mjs", import.meta.url), server);
   const behavior = join(packageRoot, "behavior.json");
   await writeFile(
     behavior,
@@ -77,7 +75,7 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
   }
   const suite = {
     schemaVersion: 1,
-    name: "Hermes native MCP",
+    name: "Pi native MCP",
     artifact: {
       root: artifact,
       packages: ["plugin"],
@@ -86,15 +84,15 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
     cases: [
       {
         id: "invoke",
-        kind: "hermes-mcp",
+        kind: "pi-mcp",
         package: "plugin",
-        registration: ".hermes/plugins/native-mcp",
-        python:
-          process.env.VERDR_HERMES_PYTHON ??
-          resolve("results/hermes-environment/bin/python3"),
-        server: "probe",
+        registration: ".pi/plugins/native-mcp",
+        runtimeModules:
+          process.env.VERDR_PI_RUNTIME_MODULES ?? resolve("node_modules"),
+        server: "native-mcp__probe",
         tool: "echo",
         arguments: { token: "verified" },
+        disabledServers: ["native-mcp__excluded"],
         assert: [
           { type: "contains", value: "native:verified" },
           { type: "not-contains", value: "metadata-only-sentinel" },
@@ -102,10 +100,13 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
       },
     ],
   };
-  for (const server of ["excluded", "probe"]) {
-    const output = join(root, server);
+  for (const disabledServers of [[], ["native-mcp__excluded"]]) {
+    const output = join(
+      root,
+      disabledServers.length ? "excluded" : "unrestricted",
+    );
     const positive = await runSuite(
-      { ...suite, cases: [{ ...suite.cases[0], server }] },
+      { ...suite, cases: [{ ...suite.cases[0], disabledServers }] },
       output,
     );
     assert.equal(positive.gate, "pass", JSON.stringify(positive));
@@ -113,33 +114,30 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
     const raw = JSON.parse(await readFile(join(output, "raw/0.json"), "utf8"));
     const response = raw.results[0].response;
     const result = JSON.parse(response.output);
-    assert.equal(result.result, "native:verified");
+    assert.equal(result.isError, false);
     assert.equal(result.structuredContent.token, "native:verified");
-    const capabilities = result.structuredContent.clientCapabilities;
-    assert.equal(Object.hasOwn(capabilities, "sampling"), false);
-    assert.equal(Object.hasOwn(capabilities, "elicitation"), false);
+    for (const capability of ["sampling", "elicitation"])
+      assert.equal(
+        capability in result.structuredContent.clientCapabilities,
+        false,
+      );
+    assert.deepEqual(result.content, [
+      { type: "text", text: "native:verified" },
+    ]);
     assertNativeProcessExited(result.structuredContent.processId);
-    const metadata = response.metadata;
-    assert.equal(metadata.target, "hermes");
-    assert.equal(metadata.server.status, "connected");
-    assert.match(
-      metadata.server.name,
-      new RegExp(`^agent-plugin-native-mcp-[0-9a-f]{8}__${server}$`),
-    );
-    const otherServer = server === "probe" ? "excluded" : "probe";
-    assert.deepEqual(metadata.composition, {
+    assert.equal(response.metadata.target, "pi");
+    assert.equal(response.metadata.modelConsumption, "not-measured");
+    assert.equal(response.metadata.adherence, "not-measured");
+    assert.deepEqual(response.metadata.composition, {
       scope: "temporary-native-profile",
-      selectedServer: metadata.server.name,
-      disabledServers: [
-        metadata.server.name.replace(/__(probe|excluded)$/, `__${otherServer}`),
-      ],
-      sampling: false,
-      elicitation: false,
+      disabledServers,
     });
-    if (server === "excluded") {
+    if (disabledServers.length)
+      await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
+    else {
       assert.equal(await readFile(startupMarker, "utf8"), "started");
       await rm(startupMarker);
-    } else await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
+    }
     const snapshot = JSON.parse(
       await readFile(join(output, "artifact.json"), "utf8"),
     );
@@ -157,15 +155,19 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
   const ambientRoot = join(ambient, "plugins/native-mcp");
   await mkdir(dirname(ambientRoot), { recursive: true });
   await cp(packageRoot, ambientRoot, { recursive: true });
+  await mkdir(join(ambient, "agent-plugins"));
   await writeFile(
-    join(ambient, "config.yaml"),
-    JSON.stringify({ plugins: { enabled: ["native-mcp"] } }),
+    join(ambient, "agent-plugins/state.json"),
+    JSON.stringify({ disabled: [], trusted: ["user:native-mcp"] }),
   );
-  const previous = process.env.HERMES_HOME;
-  process.env.HERMES_HOME = ambient;
+  const variables = ["PI_AGENT_DIR", "PI_CODING_AGENT_DIR"];
+  const previous = variables.map((name) => process.env[name]);
+  for (const name of variables) process.env[name] = ambient;
   context.after(() => {
-    if (previous === undefined) delete process.env.HERMES_HOME;
-    else process.env.HERMES_HOME = previous;
+    for (const [index, name] of variables.entries()) {
+      if (previous[index] === undefined) delete process.env[name];
+      else process.env[name] = previous[index];
+    }
   });
   await writeFile(
     behavior,
@@ -174,7 +176,7 @@ test("Hermes invokes only the selected native MCP server, cleans up children, an
   const failedTool = await runSuite(suite, join(root, "tool-error"));
   assert.equal(failedTool.gate, "fail");
   assert.equal(failedTool.summary.pass, 0);
-  await writeFile(join(packageRoot, "server.mjs"), "process.exit(0);\n");
+  await writeFile(server, "process.exit(0);\n");
   const corrupt = await runSuite(suite, join(root, "corrupt"));
   assert.equal(corrupt.gate, "fail");
   assert.equal(corrupt.summary.pass, 0);
