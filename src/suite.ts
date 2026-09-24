@@ -1,76 +1,6 @@
 import { z } from "zod";
 
-const relativePath = z
-  .string()
-  .min(1)
-  .refine(
-    (value) =>
-      !value.startsWith("/") &&
-      !value.includes("\\") &&
-      !value.split("/").includes("..") &&
-      !value.includes("\0"),
-    "Expected a contained relative path",
-  );
-const assertion = z.discriminatedUnion("type", [
-  z
-    .object({
-      type: z.enum(["equals", "contains", "not-contains", "regex"]),
-      value: z.string(),
-    })
-    .strict(),
-  z.object({ type: z.literal("is-json") }).strict(),
-]);
-const caseFields = {
-  id: z.string().min(1).max(128),
-  assert: z.array(assertion).min(1),
-};
-const nativeFields = {
-  ...caseFields,
-  package: relativePath,
-  marketplace: relativePath,
-  plugin: z.string().min(1),
-};
-const evaluationCase = z.discriminatedUnion("kind", [
-  z
-    .object({ ...caseFields, kind: z.literal("file"), path: relativePath })
-    .strict(),
-  z
-    .object({
-      ...caseFields,
-      kind: z.literal("command"),
-      command: z.string().min(1),
-      args: z.array(z.string()).default([]),
-    })
-    .strict(),
-  z
-    .object({
-      ...caseFields,
-      kind: z.literal("injected"),
-      instructionFiles: z.array(relativePath).min(1),
-      prompt: z.string().min(1),
-      provider: z
-        .object({
-          id: z.string().min(1),
-          config: z.record(z.string(), z.unknown()).default({}),
-        })
-        .strict(),
-    })
-    .strict(),
-  z
-    .object({
-      ...nativeFields,
-      kind: z.literal("codex-discovery"),
-      executable: z.string().default("codex"),
-    })
-    .strict(),
-  z
-    .object({
-      ...nativeFields,
-      kind: z.literal("claude-discovery"),
-      executable: z.string().default("claude"),
-    })
-    .strict(),
-]);
+import { evaluationCase, relativeArtifactPath } from "./case.js";
 
 export const suiteSchema = z
   .object({
@@ -79,12 +9,12 @@ export const suiteSchema = z
     artifact: z
       .object({
         root: z.string().min(1),
-        packages: z.array(relativePath).min(1),
+        packages: z.array(relativeArtifactPath).min(1),
         requiredFiles: z
           .array(
             z
               .object({
-                path: relativePath,
+                path: relativeArtifactPath,
                 sha256: z
                   .string()
                   .regex(/^[a-f0-9]{64}$/)
@@ -146,7 +76,8 @@ export const suiteSchema = z
       identifiers.add(evaluation.id);
       if (
         (evaluation.kind === "codex-discovery" ||
-          evaluation.kind === "claude-discovery") &&
+          evaluation.kind === "claude-discovery" ||
+          evaluation.kind === "installed-identity") &&
         !suite.artifact.packages.includes(evaluation.package)
       )
         context.addIssue({
