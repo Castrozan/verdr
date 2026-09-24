@@ -32,6 +32,8 @@ test("native installed discovery succeeds, then rejects corrupt output despite a
     }),
   );
   const skill = join(packageRoot, "skills/probe/SKILL.md");
+  await mkdir(join(packageRoot, ".claude-plugin"));
+  await writeFile(join(packageRoot, ".claude-plugin/plugin.json"), "{broken");
   await writeFile(
     skill,
     "---\nname: probe\ndescription: Verify native fixture discovery.\n---\n\n### Task\n\nReturn the [fixture answer](references/answer.txt).\n",
