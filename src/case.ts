@@ -95,6 +95,29 @@ export const evaluationCase = z.discriminatedUnion("kind", [
     .strict(),
   z
     .object({
+      ...caseFields,
+      kind: z.literal("pi-discovery"),
+      package: relativeArtifactPath,
+      registration: relativeArtifactPath,
+      runtimeModules: z
+        .string()
+        .refine(isAbsolute, "Expected an absolute runtime modules directory"),
+    })
+    .strict(),
+  z
+    .object({
+      ...caseFields,
+      kind: z.literal("pi-skill"),
+      package: relativeArtifactPath,
+      registration: relativeArtifactPath,
+      runtimeModules: z
+        .string()
+        .refine(isAbsolute, "Expected an absolute runtime modules directory"),
+      skill: z.string().min(1),
+    })
+    .strict(),
+  z
+    .object({
       ...nativeFields,
       kind: z.literal("codex-discovery"),
       executable: z.string().default("codex"),
