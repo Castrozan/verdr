@@ -12,6 +12,9 @@ Medusa recorded these independent consumer checks during a migration across Clau
 | Package version             | `1.0.0+899fa52f618d`                                                                                                                                                                                     |
 | Complete bundle digest      | `4f2b88e6b85d84346084a2bfe206ae94dae78d0b030eb921ebca685f5f677a0c`, unchanged before and after native cases                                                                                              |
 | Producer published revision | Unknown for this candidate                                                                                                                                                                               |
+| Codex executable            | `/nix/store/9ifcrbvdzh7x23whvi876d87rrxi6m4b-codex-0.155.1/bin/codex`                                                                                                                                    |
+| Claude executable           | `/nix/store/53vv7b2pb7xm2yyqmdlgqgdkv02v4vfj-claude-code-unwrapped-2.1.280/bin/claude`                                                                                                                   |
+| OpenCode executable         | `/nix/store/j5aqada6pzi9m8qgxkpqd0a9pj18bgzh-opencode-1.18.32/bin/opencode`                                                                                                                              |
 | Pi runtime modules          | `/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules`                                                                                                 |
 | Pi package versions         | SDK 0.84.1, pi-agent-plugins 0.1.8, pi-mcp-adapter 2.34.0                                                                                                                                                |
 | Node executable             | `/nix/store/jsknrd8z1i9d2dxz5bph6g2gickv5q2j-nodejs-22.22.2/bin/node`, version 22.22.2                                                                                                                   |
@@ -24,15 +27,18 @@ The bundle digest covers relative paths, file contents, entry kinds, executable 
 
 | Check                                | Result                                                       | Scope and limit                                                                                                                          |
 | ------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Codex MCP                            | 1/1 passed; `isError=false`, language `py / Python` present  | Native app-server tool call; server belongs to `dotfiles@dotagents-local`                                                                |
+| Claude MCP                           | 1/1 passed; language `py / Python` present                   | Native control API; `plugin:dotfiles:sonarqube` connected with plugin ownership; native success omits `isError`                          |
+| OpenCode MCP                         | 1/1 passed; language `py / Python` present                   | Native debug code mode; emitted config binds the canonical package and exactly one child tool call completes                             |
 | Pi MCP                               | 1/1 passed; `isError=false`, language `py / Python` present  | Native plugin trust and MCP tool execution from a temporary profile; emitted package and native configuration preserved through shutdown |
 | Hermes MCP                           | 1/1 passed; language `py / Python` present                   | Native portable plugin manager and tool registry; unchanged native JSON rendering retained                                               |
 | Hermes discovery and skill retrieval | 2/2 passed; 19/19 intended skills at canonical package paths | Native discovery and `skill_view(preprocess=False)` for `humanize`; no model turn                                                        |
 | Hermes shell hook                    | 2/2 synthetic cases passed                                   | Public `run_once`: `write_file` targeting `AGENTS.md` blocked, `module.py` allowed; neither target created                               |
 | Missing Hermes hook command          | 1/1 rejected                                                 | A null parsed action cannot count as allow when native execution reports an error                                                        |
 
-The published suite was repeated against the supplied candidate and passed 2/2 cases with zero errors and unchanged bundle identity. Both MCP cases call only `sonarqube.list_languages` with `{"q":"python"}`. Results include Python and IPython Notebooks. Token contents were neither read nor captured.
+The published suite was repeated against the supplied candidate and passed 5/5 cases with zero errors and unchanged bundle identity. All five MCP cases call only `sonarqube.list_languages` with `{"q":"python"}`. Results include Python and IPython Notebooks. Token contents were neither read nor captured.
 
-Pi clones the complete native configuration and changes only `dotfiles__chrome-devtools.disabled=true` before adapter startup. Hermes clones the complete portable server map, enables the selected SonarQube server, and disables sampling and elicitation. These are isolated invocation compositions; they do not prove live registration.
+Codex and Claude exclude the bare plugin server name `chrome-devtools` before discovery. OpenCode disables the emitted configuration key `plugin.dotfiles.chrome-devtools` through native inline configuration. Pi clones the complete native configuration and changes only `dotfiles__chrome-devtools.disabled=true` before adapter startup. Hermes clones the complete portable server map, enables the selected SonarQube server, and disables sampling and elicitation. These are isolated invocation compositions; they do not prove live registration.
 
 The Hermes hook check used the exact interpreter with `-I -B`, an isolated home, Hermes home and marker directory, and no `BASH_ENV` or `PYTHONPATH`. Both positive cases required exit 0, no native error, no timeout and the expected action. The complete bundle remained unchanged and the temporary profile was removed. Final deployed-command repetition belongs to the producer.
 
@@ -48,7 +54,7 @@ The Hermes hook check used the exact interpreter with `-I -B`, an isolated home,
 
 The 25 changed mappings require content review. All 26 repository-scope files still resolved to pre-activation origins. Matching bytes alone therefore cannot prove migration to the new package. The catalog contains no global `AGENTS.md` or `CLAUDE.md` entrypoints; deployed instruction projections require separate identity evidence. None of these counts proves that the intended source catalog is complete.
 
-Public native tests cover discovery and MCP paths for all five harnesses. Earlier Claude, Codex and OpenCode candidate MCP positives preceded the stricter pre-start exclusion scope; final acceptance must repeat them with the published exclusions. Portable hooks, native bridge hooks, direct invocation and model adherence remain separate capabilities.
+Public native tests cover discovery and MCP paths for all five harnesses. All five candidate invocations now apply the verified pre-start exclusion scope. Final acceptance must repeat these checks against the activated outputs and actual installed profiles. Portable hooks, native bridge hooks, direct invocation and model adherence remain separate capabilities.
 
 ## Repeat the selected MCP cases
 
