@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
-import { closeProcess } from "../process.js";
-import type { Suite } from "../suite/schema.js";
+import { closeProcess } from "../../process.js";
+import type { Suite } from "../../suite/schema.js";
 
 export async function queryCodex<Result>(
   executable: string,

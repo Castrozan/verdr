@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
-import { containedPath, snapshotArtifact } from "../artifact.js";
-import type { EvaluationCase, Suite } from "../suite/schema.js";
+import { containedPath, snapshotArtifact } from "../../artifact.js";
+import type { EvaluationCase, Suite } from "../../suite/schema.js";
 import { discoverCodexPlugin } from "./discovery.js";
 import { queryCodex } from "./protocol.js";
 

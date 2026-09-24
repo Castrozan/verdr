@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { inspectOpenCode } from "../src/opencode/skills.js";
+import { inspectOpenCode } from "../src/native/opencode/skills.js";
 
 test("skill invocation assertions receive only the returned tool body", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-opencode-output-"));

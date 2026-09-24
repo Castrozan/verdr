@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
-import { prepareClaudeInstallation } from "../src/claude/installation.js";
+import { prepareClaudeInstallation } from "../src/native/claude/installation.js";
 import { suiteSchema } from "../src/suite/schema.js";
 import { claudeFixture } from "./native/claude-fixture.js";
 

@@ -12,7 +12,7 @@
     "verdr": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc && node -e \"require('node:fs').copyFileSync('src/native/hermes/probe.py','dist/native/hermes/probe.py')\"",
     "test": "node --import tsx --test test/*.test.ts",
     "test:native": "node --import tsx --test --test-concurrency=1 test/native/*.integration.ts",
     "check": "tsc --noEmit && prettier --check .",

@@ -3,7 +3,7 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { queryCodex } from "../src/codex/protocol.js";
+import { queryCodex } from "../src/native/codex/protocol.js";
 
 test("Codex protocol bounds terminate an unresponsive process even when graceful shutdown stalls", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-codex-protocol-"));

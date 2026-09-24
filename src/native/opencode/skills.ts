@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import { readFile, realpath } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
 import { z } from "zod";
-import { containedPath, containsPath, digest } from "../artifact.js";
-import { runProcess } from "../process.js";
-import type { EvaluationCase, Suite } from "../suite/schema.js";
+import { containedPath, containsPath, digest } from "../../artifact.js";
+import { runProcess } from "../../process.js";
+import type { EvaluationCase, Suite } from "../../suite/schema.js";
 
 const discoveredSkills = z.array(
   z.object({

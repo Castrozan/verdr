@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { queryClaudeControl } from "../src/claude/protocol.js";
+import { queryClaudeControl } from "../src/native/claude/protocol.js";
 
 test("Claude control transmits only declared control frames and rejects dispatch errors and model turns", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-claude-control-"));

@@ -2,7 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { evaluate, loadApiProvider } from "promptfoo";
 import { containedPath } from "./artifact.js";
-import { discoverCodexPlugin } from "./codex/discovery.js";
+import { discoverCodexPlugin } from "./native/codex/discovery.js";
 import { runProcess } from "./process.js";
 import type { EvaluationCase, Suite } from "./suite/schema.js";
 
@@ -40,31 +40,39 @@ async function execute() {
   if (evaluation.kind === "codex-discovery")
     return discoverCodexPlugin(evaluation, input);
   if (evaluation.kind === "codex-mcp") {
-    const { callCodexTool } = await import("./codex/mcp.js");
+    const { callCodexTool } = await import("./native/codex/mcp.js");
     return callCodexTool(evaluation, input);
   }
   if (evaluation.kind === "claude-discovery") {
-    const { discoverClaudePlugin } = await import("./claude/discovery.js");
+    const { discoverClaudePlugin } =
+      await import("./native/claude/discovery.js");
     return discoverClaudePlugin(evaluation, input);
   }
   if (evaluation.kind === "claude-mcp") {
-    const { callClaudeTool } = await import("./claude/mcp.js");
+    const { callClaudeTool } = await import("./native/claude/mcp.js");
     return callClaudeTool(evaluation, input);
   }
   if (
     evaluation.kind === "opencode-discovery" ||
     evaluation.kind === "opencode-skill"
   ) {
-    const { inspectOpenCode } = await import("./opencode/skills.js");
+    const { inspectOpenCode } = await import("./native/opencode/skills.js");
     return inspectOpenCode(evaluation, input);
   }
   if (evaluation.kind === "opencode-mcp") {
-    const { callOpenCodeTool } = await import("./opencode/mcp.js");
+    const { callOpenCodeTool } = await import("./native/opencode/mcp.js");
     return callOpenCodeTool(evaluation, input);
   }
   if (evaluation.kind === "pi-discovery" || evaluation.kind === "pi-skill") {
-    const { inspectPi } = await import("./pi/skills.js");
+    const { inspectPi } = await import("./native/pi/skills.js");
     return inspectPi(evaluation, input);
+  }
+  if (
+    evaluation.kind === "hermes-discovery" ||
+    evaluation.kind === "hermes-skill"
+  ) {
+    const { inspectHermes } = await import("./native/hermes/skills.js");
+    return inspectHermes(evaluation, input);
   }
   if (evaluation.kind === "command") {
     const result = await runProcess(
