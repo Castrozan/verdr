@@ -58,6 +58,10 @@ async function execute() {
     const { inspectOpenCode } = await import("./opencode/skills.js");
     return inspectOpenCode(evaluation, input);
   }
+  if (evaluation.kind === "opencode-mcp") {
+    const { callOpenCodeTool } = await import("./opencode/mcp.js");
+    return callOpenCodeTool(evaluation, input);
+  }
   if (evaluation.kind === "pi-discovery" || evaluation.kind === "pi-skill") {
     const { inspectPi } = await import("./pi/skills.js");
     return inspectPi(evaluation, input);

@@ -96,6 +96,19 @@ export const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({
       ...caseFields,
+      kind: z.literal("opencode-mcp"),
+      package: relativeArtifactPath,
+      configuration: relativeArtifactPath,
+      executable: z.string().default("opencode"),
+      agent: z.string().default("build"),
+      server: z.string().min(1),
+      tool: z.string().regex(/^[a-zA-Z0-9_-]+$/),
+      arguments: z.record(z.string(), z.unknown()).default({}),
+    })
+    .strict(),
+  z
+    .object({
+      ...caseFields,
       kind: z.literal("pi-discovery"),
       package: relativeArtifactPath,
       registration: relativeArtifactPath,
