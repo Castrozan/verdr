@@ -10,7 +10,7 @@ import {
 import { runProcess } from "../process.js";
 import { queryCodex } from "./protocol.js";
 import { installedPackages } from "./installation.js";
-import type { EvaluationCase, Suite } from "../suite.js";
+import type { EvaluationCase, Suite } from "../suite/schema.js";
 
 const skillsResponse = z
   .object({
@@ -75,14 +75,13 @@ export async function discoverCodexPlugin(
     });
   const version = (await execute(["--version"])).stdout.trim();
   const baseline = skillsResponse.parse(
-    (
-      await queryCodex(evaluation.executable, input.workspace, input.limits, [
-        {
-          method: "skills/list",
-          params: { cwds: [input.workspace], forceReload: true },
-        },
-      ])
-    )[0],
+    await queryCodex(
+      evaluation.executable,
+      input.workspace,
+      input.limits,
+      (request) =>
+        request("skills/list", { cwds: [input.workspace], forceReload: true }),
+    ),
   );
   await execute(["plugin", "marketplace", "add", input.root, "--json"]);
   await execute([
@@ -109,16 +108,16 @@ export async function discoverCodexPlugin(
     evaluation.executable,
     input.workspace,
     input.limits,
-    [
-      {
-        method: "plugin/read",
-        params: { marketplacePath, pluginName: evaluation.plugin },
-      },
-      {
-        method: "skills/list",
-        params: { cwds: [input.workspace], forceReload: true },
-      },
-      { method: "hooks/list", params: { cwds: [input.workspace] } },
+    async (request) => [
+      await request("plugin/read", {
+        marketplacePath,
+        pluginName: evaluation.plugin,
+      }),
+      await request("skills/list", {
+        cwds: [input.workspace],
+        forceReload: true,
+      }),
+      await request("hooks/list", { cwds: [input.workspace] }),
     ],
   );
   const listing = skillsResponse.parse(loadedSkills);
@@ -146,6 +145,7 @@ export async function discoverCodexPlugin(
   }
   const output = {
     scope: "native-discovery",
+    pluginId: `${evaluation.plugin}@${marketplace.name}`,
     version,
     skills,
     plugin: detail,

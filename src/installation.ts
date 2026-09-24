@@ -1,6 +1,6 @@
 import { realpath } from "node:fs/promises";
 import { containedPath, snapshotArtifact } from "./artifact.js";
-import type { EvaluationCase, Suite } from "./suite.js";
+import type { EvaluationCase, Suite } from "./suite/schema.js";
 
 export async function inspectInstallation(
   evaluation: Extract<EvaluationCase, { kind: "installed-identity" }>,

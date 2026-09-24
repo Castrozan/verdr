@@ -2,7 +2,7 @@ import { realpath } from "node:fs/promises";
 import { snapshotArtifact } from "../artifact.js";
 import { prepareClaudeInstallation } from "./installation.js";
 import { queryClaude } from "./session.js";
-import type { EvaluationCase, Suite } from "../suite.js";
+import type { EvaluationCase, Suite } from "../suite/schema.js";
 
 export async function discoverClaudePlugin(
   evaluation: Extract<EvaluationCase, { kind: "claude-discovery" }>,

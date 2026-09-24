@@ -3,8 +3,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
-import { runSuite } from "../src/runner.js";
-import { suiteSchema } from "../src/suite.js";
+import { runSuite } from "../../src/runner.js";
+import { suiteSchema } from "../../src/suite/schema.js";
 
 test("OpenCode discovers and invokes emitted skills but rejects corruption and denied execution despite an ambient skill", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-opencode-native-"));

@@ -1,14 +1,16 @@
 import { spawn } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
 import { terminateProcess } from "../process.js";
-import type { Suite } from "../suite.js";
+import type { Suite } from "../suite/schema.js";
 
-export async function queryCodex(
+export async function queryCodex<Result>(
   executable: string,
   workspace: string,
   limits: Suite["limits"],
-  queries: { method: string; params: unknown }[],
-): Promise<unknown[]> {
+  query: (
+    request: (method: string, params: unknown) => Promise<unknown>,
+  ) => Promise<Result>,
+): Promise<Result> {
   const child = spawn(executable, ["app-server"], {
     cwd: workspace,
     env: process.env,
@@ -27,7 +29,6 @@ export async function queryCodex(
     failure ??= error;
     for (const request of pending.values()) request.reject(error);
     pending.clear();
-    terminateProcess(child, false);
   };
   const timer = setTimeout(
     () => fail(new Error("Codex protocol time limit exceeded")),
@@ -83,12 +84,21 @@ export async function queryCodex(
       capabilities: { experimentalApi: true },
     });
     child.stdin.write(JSON.stringify({ method: "initialized" }) + "\n");
-    const results: unknown[] = [];
-    for (const query of queries)
-      results.push(await request(query.method, query.params));
-    return results;
+    return await query(request);
   } finally {
     clearTimeout(timer);
-    terminateProcess(child, false);
+    if (child.exitCode === null && child.signalCode === null) {
+      await new Promise<void>((resolve) => {
+        const shutdown = setTimeout(() => {
+          terminateProcess(child, false);
+          resolve();
+        }, 2000);
+        child.once("exit", () => {
+          clearTimeout(shutdown);
+          resolve();
+        });
+        child.stdin.end();
+      });
+    }
   }
 }

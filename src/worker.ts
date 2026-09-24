@@ -4,7 +4,7 @@ import { evaluate, loadApiProvider } from "promptfoo";
 import { containedPath } from "./artifact.js";
 import { discoverCodexPlugin } from "./codex/discovery.js";
 import { runProcess } from "./process.js";
-import type { EvaluationCase, Suite } from "./suite.js";
+import type { EvaluationCase, Suite } from "./suite/schema.js";
 
 type WorkerInput = {
   evaluation: EvaluationCase;
@@ -39,6 +39,10 @@ async function execute() {
   }
   if (evaluation.kind === "codex-discovery")
     return discoverCodexPlugin(evaluation, input);
+  if (evaluation.kind === "codex-mcp") {
+    const { callCodexTool } = await import("./codex/mcp.js");
+    return callCodexTool(evaluation, input);
+  }
   if (evaluation.kind === "claude-discovery") {
     const { discoverClaudePlugin } = await import("./claude/discovery.js");
     return discoverClaudePlugin(evaluation, input);

@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { cp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { test } from "node:test";
-import { createEnvironment } from "../src/environment.js";
-import { runProcess } from "../src/process.js";
-import { runSuite } from "../src/runner.js";
+import { createEnvironment } from "../../src/environment.js";
+import { runProcess } from "../../src/process.js";
+import { runSuite } from "../../src/runner.js";
 import { claudeFixture } from "./claude-fixture.js";
 
 test("Claude discovers emitted skills, commands and agents, then rejects dropped skills despite a valid ambient installation", async (context) => {

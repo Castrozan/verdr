@@ -126,6 +126,16 @@ export const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({
       ...nativeFields,
+      kind: z.literal("codex-mcp"),
+      executable: z.string().default("codex"),
+      server: z.string().min(1),
+      tool: z.string().min(1),
+      arguments: z.record(z.string(), z.unknown()).default({}),
+    })
+    .strict(),
+  z
+    .object({
+      ...nativeFields,
       kind: z.literal("claude-discovery"),
       executable: z.string().default("claude"),
     })

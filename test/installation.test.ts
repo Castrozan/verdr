@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { runSuite } from "../src/runner.js";
-import { suiteSchema } from "../src/suite.js";
+import { suiteSchema } from "../src/suite/schema.js";
 
 test("measures installed bytes independently of intact emitted and ambient packages", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-installation-"));
