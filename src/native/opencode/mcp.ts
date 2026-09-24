@@ -44,6 +44,15 @@ export async function callOpenCodeTool(
   const effective = z
     .object({ mcp: z.record(z.string(), z.unknown()) })
     .parse(JSON.parse((await execute(["debug", "config"])).stdout));
+  for (const excluded of evaluation.disabledServers)
+    if (
+      !z
+        .object({ enabled: z.literal(false) })
+        .safeParse(effective.mcp[excluded]).success
+    )
+      throw new Error(
+        `Native OpenCode did not disable excluded MCP server: ${excluded}`,
+      );
   const normalize = (name: string) => name.replace(/[^a-zA-Z0-9_-]/g, "_");
   const serverName = normalize(evaluation.server);
   if (
