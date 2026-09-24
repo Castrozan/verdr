@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 activated production installed",
+  "artifact": {
+    "root": "/nix/store/5ax9bd536gi5rrs314py6baklsdp9168-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "activated-independent-acceptance-and-producer-ci-passed",
+      "producerVersion": "1.0.0+c052434cf2ca",
+      "producerRevision": "0bbd2470ef410e62654a2ed6be5920a448f13a45",
+      "producerRepository": "https://github.com/Castrozan/.dotfiles",
+      "piRuntimeScope": "verified-system-selected-runtime-activated",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ],
+    "digest": "87d3837d362d62b7565c2c5881a9a847a9257500133c1f39c270a15b2681a4ee"
+  },
+  "cases": [
+    {
+      "id": "claude-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.claude/plugins/cache/dotagents/dotfiles/1.0.0-c052434cf2ca",
+      "target": "claude",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "codex-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.codex/plugins/cache/dotagents-local/dotfiles/1.0.0+c052434cf2ca",
+      "target": "codex",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "opencode-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/nix/store/5ax9bd536gi5rrs314py6baklsdp9168-agent-plugin-bundle/.agents/plugins/dotfiles",
+      "target": "opencode",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "pi-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.pi/agent/plugins/dotfiles",
+      "target": "pi",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "hermes-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.hermes/plugins/dotfiles",
+      "target": "hermes",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}
