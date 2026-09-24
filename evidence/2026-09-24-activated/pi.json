@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 activated production pi",
+  "artifact": {
+    "root": "/nix/store/5ax9bd536gi5rrs314py6baklsdp9168-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "activated-independent-acceptance-and-producer-ci-passed",
+      "producerVersion": "1.0.0+c052434cf2ca",
+      "producerRevision": "0bbd2470ef410e62654a2ed6be5920a448f13a45",
+      "producerRepository": "https://github.com/Castrozan/.dotfiles",
+      "piRuntimeScope": "verified-system-selected-runtime-activated",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ],
+    "digest": "87d3837d362d62b7565c2c5881a9a847a9257500133c1f39c270a15b2681a4ee"
+  },
+  "cases": [
+    {
+      "id": "pi-native-discovery",
+      "kind": "pi-discovery",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "assert": [
+        {
+          "type": "contains",
+          "value": "\"name\":\"agent-session\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"architecture\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"browser\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"coding\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"deep-work\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"deliver\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"devenv\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"docs\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"explore\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"goal-prompt\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"herdr\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"humanize\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"instructions\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"orchestrate\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"research\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"review\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"workspace\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"core\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"all-skills\""
+        }
+      ]
+    },
+    {
+      "id": "pi-native-expansion",
+      "kind": "pi-skill",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "skill": "humanize",
+      "assert": [
+        {
+          "type": "contains",
+          "value": "### Reader understanding policy"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}
