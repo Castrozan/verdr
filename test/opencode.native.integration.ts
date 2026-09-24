@@ -23,6 +23,12 @@ test("OpenCode discovers and invokes emitted skills but rejects corruption and d
   const content =
     "---\nname: probe\ndescription: Verify actual native skill loading.\n---\n\nVERDR_NATIVE_SENTINEL";
   await writeFile(skill, content);
+  await mkdir(join(packageRoot, "skills/catalog"));
+  await writeFile(
+    join(packageRoot, "skills/catalog/SKILL.md"),
+    "---\nname: catalog\ndescription: Exercise a large native catalog.\n---\n" +
+      "\nNative corpus line.".repeat(5000),
+  );
   const configuration = {
     $schema: "https://opencode.ai/config.json",
     skills: { paths: [join(packageRoot, "skills")] },
@@ -81,13 +87,19 @@ test("OpenCode discovers and invokes emitted skills but rejects corruption and d
   assert.match(raw.results[0].response.output, /^<skill_content/);
   assert.equal(evidence.execution, "native-debug-tool");
   assert.equal(evidence.adherence, "not-measured");
-  assert.equal(evidence.skills.length, 1);
+  assert.equal(evidence.skills.length, 2);
   assert.equal(
     evidence.host.baselineSkills.some(
       (item: { name: string }) => item.name === "probe",
     ),
     false,
   );
+  const truncated = await runSuite(
+    { ...suite, cases: [{ ...suite.cases[1], skill: "catalog" }] },
+    join(root, "truncated"),
+  );
+  assert.equal(truncated.gate, "fail");
+  assert.match(truncated.cases[0]!.reason, /returned truncated evidence/);
   await writeFile(skill, "VERDR_NATIVE_SENTINEL without required frontmatter");
   const corrupted = await runSuite(suite, join(root, "corrupted"));
   assert.equal(corrupted.gate, "fail");

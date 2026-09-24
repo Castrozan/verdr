@@ -1,5 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { readFile, realpath } from "node:fs/promises";
-import { dirname, isAbsolute } from "node:path";
+import { dirname, isAbsolute, join } from "node:path";
 import { z } from "zod";
 import { containedPath, containsPath, digest } from "../artifact.js";
 import { runProcess } from "../process.js";
@@ -53,6 +54,7 @@ export async function inspectOpenCode(
         : environment,
       ...input.limits,
       group: false,
+      stdoutPath: join(input.workspace, `opencode-${randomUUID()}.json`),
     });
   const version = (await execute(["--version"], false)).stdout.trim();
   const baseline = discoveredSkills.parse(
