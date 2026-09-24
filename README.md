@@ -2,7 +2,7 @@
 
 Evaluate the agent assets people actually install.
 
-Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, installed package identity, and native Codex, Claude Code and OpenCode discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
+Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, installed package identity, and native Codex, Claude Code, OpenCode and Pi discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
 
 ## Run
 
@@ -33,6 +33,8 @@ This fixture requires Codex and Claude Code with the native plugin APIs exercise
 | `file`               | Reads the exact emitted file and applies Promptfoo assertions.                                        | Asset content.                                                                        |
 | `command`            | Runs a trusted program with argument arrays in a fresh workspace.                                     | Declared command outcome.                                                             |
 | `injected`           | Reads emitted instruction files and calls an existing Promptfoo provider.                             | Injected behavior; no native discovery claim.                                         |
+| `pi-discovery`       | Loads the emitted registration through Pi’s SDK and Agent Plugins extension.                          | Native skill discovery with package origin.                                           |
+| `pi-skill`           | Expands a discovered skill through Pi’s native follow-up queue API.                                   | Queued skill body and origin; no model consumption or adherence claim.                |
 | `opencode-discovery` | Queries OpenCode with the emitted config file and filters skills by canonical package origin.         | Native skill discovery; no invocation claim.                                          |
 | `opencode-skill`     | Invokes a discovered skill through OpenCode’s native debug tool.                                      | Returned skill body and verified origin; no model adherence or agent-loop hook claim. |
 | `installed-identity` | Reads a producer-supplied installed package root and compares its full tree with the emitted package. | Installed bytes and executable permissions; no discovery or execution claim.          |
@@ -46,6 +48,8 @@ Codex and Claude discovery cases require `package`, `marketplace`, and `plugin`;
 Claude can load a local marketplace package directly from its emitted directory even after caching it. Its evidence therefore distinguishes `installation` from `loading`, records both digests, and rejects an unexpected loaded root. The SDK probe submits no model prompt. MCP server statuses are observations, and a pending or listed server does not prove connectivity or tool execution. Hook execution is unmeasured. The baseline records native components visible before installation; system policy is inherited and not exhaustively enumerated.
 
 OpenCode cases require `package` and the emitted `configuration` path; `executable` defaults to `opencode`. The config must select its own skill paths: Verdr points `OPENCODE_CONFIG` at it without generating replacement config or loading sibling directories implicitly. The bundle must remain immutable. `opencode-skill` also requires `skill`; `agent` defaults to `build`. Assertions grade the native tool’s returned body, with discovery and origin evidence in metadata. The debug interface makes no model call, honors deny rules, and bypasses ordinary agent-loop hooks; it does not establish adherence. [Native interface](https://github.com/anomalyco/opencode/blob/v1.18.32/packages/opencode/src/cli/cmd/debug/agent.handler.ts).
+
+Pi cases require `package`, the emitted `registration` path, and an absolute `runtimeModules` directory containing `@earendil-works/pi-coding-agent` and `pi-agent-plugins`. Verdr records both runtime versions and entrypoint hashes, loads the supplied extension in a fresh profile, and verifies discovered origins. `pi-skill` requires `skill`; assertions grade only the body expanded into Pi’s follow-up queue. The queue is cleared without starting a model turn. This does not exercise MCP, model consumption, hooks, or adherence. Both Pi profile variables are isolated. [Native queue API](https://github.com/earendil-works/pi/blob/v0.84.1/packages/coding-agent/docs/sdk.md#prompting-and-message-queueing).
 
 Command arguments accept `{artifact}`, `{profile}`, and `{workspace}`. They never run through a shell. Provider credentials must be explicitly named in the suite's `environment` array; values stay in the caller's environment. Reserved profile and Node configuration variables cannot be inherited. Suites and provider configuration are trusted executable inputs; fresh profiles are not a security sandbox.
 
@@ -62,9 +66,9 @@ npm test
 npm run test:native
 ```
 
-The native integration tests use Codex 0.155.1, selected through `VERDR_CODEX_EXECUTABLE` or `PATH`, and Claude Code 2.1.280, selected through `VERDR_CLAUDE_EXECUTABLE` or the pinned development dependency. They prove that valid ambient installations cannot rescue defective emitted assets. CI downloads the pinned Codex release with a checksum check and installs Claude through the public npm lockfile. OpenCode 1.18.32 comes from the pinned public development dependency or `VERDR_OPENCODE_EXECUTABLE`. Its native controls distinguish successful discovery from denied invocation. These native tests require no model credentials.
+The native integration tests use Codex 0.155.1, selected through `VERDR_CODEX_EXECUTABLE` or `PATH`, and Claude Code 2.1.280, selected through `VERDR_CLAUDE_EXECUTABLE` or the pinned development dependency. They prove that valid ambient installations cannot rescue defective emitted assets. CI downloads the pinned Codex release with a checksum check and installs Claude through the public npm lockfile. OpenCode 1.18.32 comes from the pinned public development dependency or `VERDR_OPENCODE_EXECUTABLE`. Its native controls distinguish successful discovery from denied invocation. Pi tests use the pinned public SDK 0.84.1 and Agent Plugins loader 0.1.8, or an explicit `VERDR_PI_RUNTIME_MODULES` directory. These native tests require no model credentials.
 
-The runner does not yet import JUnit, coverage, mutation, or flake history; compare historical evidence; calibrate judges; run paired instruction experiments; or evaluate composed installations. Native runtime support covers Codex and Claude Code discovery, plus OpenCode discovery and skill invocation. The HTML report states these limits instead of presenting an overall quality score.
+The runner does not yet import JUnit, coverage, mutation, or flake history; compare historical evidence; calibrate judges; run paired instruction experiments; or evaluate composed installations. Native runtime support covers Codex and Claude Code discovery, plus OpenCode skill invocation and Pi skill discovery and queue expansion. The HTML report states these limits instead of presenting an overall quality score.
 
 - [Implementation plan](docs/implementation-plan.md)
 - [Generated artifact contract](docs/artifact-contract.md)
