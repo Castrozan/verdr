@@ -1,8 +1,8 @@
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
-import { snapshotArtifact } from "../artifact.js";
-import type { EvaluationCase, Suite } from "../suite/schema.js";
+import { snapshotArtifact } from "../../artifact.js";
+import type { EvaluationCase, Suite } from "../../suite/schema.js";
 import { discoverClaudePlugin } from "./discovery.js";
 import { queryClaudeControl } from "./protocol.js";
 

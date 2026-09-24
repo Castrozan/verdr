@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { installedPackages } from "../src/codex/installation.js";
+import { installedPackages } from "../src/native/codex/installation.js";
 
 test("Codex package discovery preserves opaque native manifests while rejecting a broken portable root", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-codex-cache-"));

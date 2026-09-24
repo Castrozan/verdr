@@ -5,8 +5,8 @@ import {
   type SDKUserMessage,
 } from "@anthropic-ai/claude-agent-sdk";
 import { z } from "zod";
-import { terminateProcess } from "../process.js";
-import type { Suite } from "../suite/schema.js";
+import { terminateProcess } from "../../process.js";
+import type { Suite } from "../../suite/schema.js";
 
 const namedComponent = z
   .object({ name: z.string(), description: z.string() })

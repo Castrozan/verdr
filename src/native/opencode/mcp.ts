@@ -3,9 +3,9 @@ import { readFile, realpath } from "node:fs/promises";
 import { join } from "node:path";
 import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
-import { containedPath, digest } from "../artifact.js";
-import { runProcess } from "../process.js";
-import type { EvaluationCase, Suite } from "../suite/schema.js";
+import { containedPath, digest } from "../../artifact.js";
+import { runProcess } from "../../process.js";
+import type { EvaluationCase, Suite } from "../../suite/schema.js";
 
 export async function callOpenCodeTool(
   evaluation: Extract<EvaluationCase, { kind: "opencode-mcp" }>,

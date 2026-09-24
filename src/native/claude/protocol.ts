@@ -1,8 +1,8 @@
 import type { SDKControlRequest } from "@anthropic-ai/claude-agent-sdk";
 import { spawn } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
-import { closeProcess } from "../process.js";
-import type { Suite } from "../suite/schema.js";
+import { closeProcess } from "../../process.js";
+import type { Suite } from "../../suite/schema.js";
 
 export async function queryClaudeControl<Result>(
   executable: string,

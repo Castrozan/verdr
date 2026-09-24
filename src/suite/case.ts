@@ -31,6 +31,14 @@ const nativeFields = {
   marketplace: relativeArtifactPath,
   plugin: z.string().min(1),
 };
+const hermesFields = {
+  ...caseFields,
+  package: relativeArtifactPath,
+  registration: relativeArtifactPath,
+  python: z
+    .string()
+    .refine(isAbsolute, "Expected an absolute Hermes interpreter"),
+};
 export const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({
@@ -127,6 +135,14 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       runtimeModules: z
         .string()
         .refine(isAbsolute, "Expected an absolute runtime modules directory"),
+      skill: z.string().min(1),
+    })
+    .strict(),
+  z.object({ ...hermesFields, kind: z.literal("hermes-discovery") }).strict(),
+  z
+    .object({
+      ...hermesFields,
+      kind: z.literal("hermes-skill"),
       skill: z.string().min(1),
     })
     .strict(),

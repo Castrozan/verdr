@@ -3,8 +3,8 @@ import { mkdir, readFile, realpath, symlink } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { z } from "zod";
-import { containedPath, containsPath, digest } from "../artifact.js";
-import type { EvaluationCase } from "../suite/schema.js";
+import { containedPath, containsPath, digest } from "../../artifact.js";
+import type { EvaluationCase } from "../../suite/schema.js";
 import { openPiSession } from "./session.js";
 
 export async function inspectPi(

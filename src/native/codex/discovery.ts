@@ -6,11 +6,11 @@ import {
   containsPath,
   digest,
   snapshotArtifact,
-} from "../artifact.js";
-import { runProcess } from "../process.js";
+} from "../../artifact.js";
+import { runProcess } from "../../process.js";
 import { queryCodex } from "./protocol.js";
 import { installedPackages } from "./installation.js";
-import type { EvaluationCase, Suite } from "../suite/schema.js";
+import type { EvaluationCase, Suite } from "../../suite/schema.js";
 
 const skillsResponse = z
   .object({
