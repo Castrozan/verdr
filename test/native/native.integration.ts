@@ -10,9 +10,9 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { runSuite } from "../src/runner.js";
-import { createEnvironment } from "../src/environment.js";
-import { runProcess } from "../src/process.js";
+import { runSuite } from "../../src/runner.js";
+import { createEnvironment } from "../../src/environment.js";
+import { runProcess } from "../../src/process.js";
 
 test("native installed discovery succeeds, then rejects corrupt output despite a valid ambient cached installation", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-native-"));

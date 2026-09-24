@@ -4,7 +4,7 @@ import { isAbsolute, relative, resolve } from "node:path";
 import { Ajv2020 } from "ajv/dist/2020.js";
 import manifestSchema from "./schemas/plugin.schema.json" with { type: "json" };
 import mcpSchema from "./schemas/mcp.schema.json" with { type: "json" };
-import type { Suite } from "./suite.js";
+import type { Suite } from "./suite/schema.js";
 
 const validator = new Ajv2020({ allErrors: true, strict: false });
 const validateManifest = validator.compile(manifestSchema);

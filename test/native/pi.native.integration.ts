@@ -10,8 +10,8 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
-import { runSuite } from "../src/runner.js";
-import { suiteSchema } from "../src/suite.js";
+import { runSuite } from "../../src/runner.js";
+import { suiteSchema } from "../../src/suite/schema.js";
 
 test("Pi discovers and expands exact emitted skills without a model turn and rejects corrupt output despite ambient plugins", async (context) => {
   const root = await mkdtemp(join(tmpdir(), "verdr-pi-native-"));

@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 import { inspectArtifact, snapshotArtifact } from "../src/artifact.js";
-import { suiteSchema } from "../src/suite.js";
+import { suiteSchema } from "../src/suite/schema.js";
 
 async function fixture(context: {
   after: (callback: () => Promise<void>) => void;

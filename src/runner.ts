@@ -11,7 +11,11 @@ import {
 } from "./evidence.js";
 import { runProcess } from "./process.js";
 import { renderReport, type EvaluationReport } from "./report.js";
-import { suiteSchema, type EvaluationCase, type Suite } from "./suite.js";
+import {
+  suiteSchema,
+  type EvaluationCase,
+  type Suite,
+} from "./suite/schema.js";
 
 async function executeCase(
   suite: Suite,
