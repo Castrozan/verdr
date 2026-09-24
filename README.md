@@ -2,7 +2,7 @@
 
 Evaluate the agent assets people actually install.
 
-Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, and native Codex and Claude Code discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
+Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, installed package identity, and native Codex and Claude Code discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
 
 ## Run
 
@@ -28,13 +28,16 @@ This fixture requires Codex and Claude Code with the native plugin APIs exercise
 
 `artifact.root` resolves relative to the suite file; `--artifact` overrides it relative to the caller's directory. Package roots and required assets are relative to that emitted root. The explicit required-file inventory can detect dropped resources; deriving it only from surviving output cannot.
 
-| Case kind          | Executes                                                                                         | Claim                                                                      |
-| ------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| `file`             | Reads the exact emitted file and applies Promptfoo assertions.                                   | Asset content.                                                             |
-| `command`          | Runs a trusted program with argument arrays in a fresh workspace.                                | Declared command outcome.                                                  |
-| `injected`         | Reads emitted instruction files and calls an existing Promptfoo provider.                        | Injected behavior; no native discovery claim.                              |
-| `codex-discovery`  | Installs an emitted marketplace with Codex and queries its native APIs.                          | Installed identity and discovery; no invocation or adherence claim.        |
-| `claude-discovery` | Installs an emitted marketplace with Claude Code and queries the native session through its SDK. | Installed identity and native discovery; no invocation or adherence claim. |
+| Case kind            | Executes                                                                                              | Claim                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `file`               | Reads the exact emitted file and applies Promptfoo assertions.                                        | Asset content.                                                               |
+| `command`            | Runs a trusted program with argument arrays in a fresh workspace.                                     | Declared command outcome.                                                    |
+| `injected`           | Reads emitted instruction files and calls an existing Promptfoo provider.                             | Injected behavior; no native discovery claim.                                |
+| `installed-identity` | Reads a producer-supplied installed package root and compares its full tree with the emitted package. | Installed bytes and executable permissions; no discovery or execution claim. |
+| `codex-discovery`    | Installs an emitted marketplace with Codex and queries its native APIs.                               | Installed identity and discovery; no invocation or adherence claim.          |
+| `claude-discovery`   | Installs an emitted marketplace with Claude Code and queries the native session through its SDK.      | Installed identity and native discovery; no invocation or adherence claim.   |
+
+`installed-identity` requires `package`, an absolute `installedRoot`, and `target` (`claude`, `codex`, `opencode`, `pi`, or `hermes`). It reads the existing installation without registering or repairing it. A root symlink may resolve to the emitted package; escaping links within a package fail containment. Corruption cannot fall back to another installed copy.
 
 Both native cases require `package`, `marketplace`, and `plugin`; `executable` defaults to `codex` or `claude`. The package must appear in `artifact.packages`. Claude consumes `.claude-plugin/marketplace.json` and the package's emitted `.claude-plugin/plugin.json`; Verdr does not generate either file. Use assertions on the expected namespaced components as well as the required-file inventory to detect components the native loader omits.
 

@@ -33,6 +33,10 @@ async function execute() {
         "utf8",
       ),
     };
+  if (evaluation.kind === "installed-identity") {
+    const { inspectInstallation } = await import("./installation.js");
+    return inspectInstallation(evaluation, input);
+  }
   if (evaluation.kind === "codex-discovery")
     return discoverCodexPlugin(evaluation, input);
   if (evaluation.kind === "claude-discovery") {
