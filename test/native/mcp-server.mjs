@@ -1,5 +1,8 @@
 import { createInterface } from "node:readline";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+
+if (process.env.VERDR_TEST_MCP_STARTUP_FILE)
+  writeFileSync(process.env.VERDR_TEST_MCP_STARTUP_FILE, "started");
 
 setInterval(() => undefined, 1000);
 

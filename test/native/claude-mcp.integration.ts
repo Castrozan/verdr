@@ -14,6 +14,7 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
     new URL("mcp-server.mjs", import.meta.url),
     join(packageRoot, "server.mjs"),
   );
+  const startupMarker = join(root, "excluded-started");
   const behavior = join(packageRoot, "behavior.json");
   await writeFile(
     behavior,
@@ -29,6 +30,12 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
           command: "node",
           args: ["${PLUGIN_ROOT}/server.mjs"],
         },
+        excluded: {
+          type: "stdio",
+          command: "node",
+          args: ["${PLUGIN_ROOT}/server.mjs"],
+          env: { VERDR_TEST_MCP_STARTUP_FILE: startupMarker },
+        },
       },
     }),
   );
@@ -40,6 +47,12 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
           type: "stdio",
           command: "node",
           args: ["${CLAUDE_PLUGIN_ROOT}/server.mjs"],
+        },
+        excluded: {
+          type: "stdio",
+          command: "node",
+          args: ["${CLAUDE_PLUGIN_ROOT}/server.mjs"],
+          env: { VERDR_TEST_MCP_STARTUP_FILE: startupMarker },
         },
       },
     }),
@@ -60,6 +73,7 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
         id: "invoke",
         kind: "claude-mcp",
         server: "probe",
+        disabledServers: ["excluded"],
         tool: "echo",
         arguments: { token: "verified" },
         assert: [
@@ -69,13 +83,25 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
       },
     ],
   };
+  const unrestricted = await runSuite(
+    { ...suite, cases: [{ ...suite.cases[0], disabledServers: [] }] },
+    join(root, "unrestricted"),
+  );
+  assert.equal(unrestricted.gate, "pass", JSON.stringify(unrestricted));
+  assert.equal(await readFile(startupMarker, "utf8"), "started");
+  await rm(startupMarker);
   const positive = await runSuite(suite, join(root, "positive"));
   assert.equal(positive.gate, "pass", JSON.stringify(positive));
+  await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   const raw = JSON.parse(
     await readFile(join(root, "positive/raw/0.json"), "utf8"),
   );
   assert.equal(raw.results[0].response.metadata.server.source, "plugin");
   assert.equal(raw.results[0].response.metadata.server.status, "connected");
+  assert.deepEqual(
+    raw.results[0].response.metadata.composition.disabledServers,
+    suite.cases[0]!.disabledServers,
+  );
   const serverProcessId = JSON.parse(raw.results[0].response.output)
     .structuredContent.processId;
   let serverSurvived = false;
@@ -126,6 +152,7 @@ test("Claude invokes its plugin MCP, rejects server error flags, and ignores a v
       corrupt.cases[0]!.reason,
       /Claude control error|does not belong/,
     );
+    await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   } finally {
     if (previousProfile === undefined) delete process.env.CLAUDE_CONFIG_DIR;
     else process.env.CLAUDE_CONFIG_DIR = previousProfile;

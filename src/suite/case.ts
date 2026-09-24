@@ -104,6 +104,7 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       server: z.string().min(1),
       tool: z.string().regex(/^[a-zA-Z0-9_-]+$/),
       arguments: z.record(z.string(), z.unknown()).default({}),
+      disabledServers: z.array(z.string().min(1)).max(100).default([]),
     })
     .strict(),
   z
@@ -144,6 +145,7 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       server: z.string().min(1),
       tool: z.string().min(1),
       arguments: z.record(z.string(), z.unknown()).default({}),
+      disabledServers: z.array(z.string().min(1)).max(100).default([]),
     })
     .strict(),
   z
@@ -161,6 +163,7 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       server: z.string().min(1),
       tool: z.string().regex(/^[a-zA-Z0-9_-]+$/),
       arguments: z.record(z.string(), z.unknown()).default({}),
+      disabledServers: z.array(z.string().min(1)).max(100).default([]),
     })
     .strict(),
 ]);

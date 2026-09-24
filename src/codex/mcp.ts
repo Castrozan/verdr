@@ -1,5 +1,7 @@
+import { readFile, writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { z } from "zod";
-import { snapshotArtifact } from "../artifact.js";
+import { containedPath, snapshotArtifact } from "../artifact.js";
 import type { EvaluationCase, Suite } from "../suite/schema.js";
 import { discoverCodexPlugin } from "./discovery.js";
 import { queryCodex } from "./protocol.js";
@@ -17,6 +19,30 @@ export async function callCodexTool(
   evaluation: Extract<EvaluationCase, { kind: "codex-mcp" }>,
   input: { root: string; workspace: string; limits: Suite["limits"] },
 ) {
+  if (evaluation.disabledServers.includes(evaluation.server))
+    throw new Error("Requested MCP server is disabled by the evaluation");
+  const marketplace = z
+    .object({ name: z.string().min(1) })
+    .parse(
+      JSON.parse(
+        await readFile(
+          await containedPath(input.root, evaluation.marketplace),
+          "utf8",
+        ),
+      ),
+    );
+  const pluginId = `${evaluation.plugin}@${marketplace.name}`;
+  if (evaluation.disabledServers.length)
+    await writeFile(
+      join(process.env.CODEX_HOME!, "config.toml"),
+      [...new Set(evaluation.disabledServers)]
+        .map(
+          (server) =>
+            `[plugins.${JSON.stringify(pluginId)}.mcp_servers.${JSON.stringify(server)}]\nenabled = false\n`,
+        )
+        .join("\n"),
+      { flag: "wx", mode: 0o600 },
+    );
   const discovered = await discoverCodexPlugin(
     { ...evaluation, kind: "codex-discovery" },
     input,
@@ -100,6 +126,10 @@ export async function callCodexTool(
       server: invoked.server,
       tool: evaluation.tool,
       execution: "codex-app-server-control",
+      composition: {
+        scope: "temporary-native-profile",
+        disabledServers: evaluation.disabledServers,
+      },
       modelConsumption: "not-measured",
       adherence: "not-measured",
       approvalLoop: "bypassed-by-native-control-api",
