@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 built production bundle MCP",
+  "artifact": {
+    "root": "/nix/store/br6d3pqcig9d9lcaklk56sc1qfghv6g4-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "built-unpublished-activation-pending",
+      "producerVersion": "1.0.0+d38c500fa3e3",
+      "piRuntimeScope": "verified-system-selected-runtime-not-deployed",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "digest": "e66126ec18d1d21adb14f4b98771ea266ad0e5d081a7bd9d4ce3b248f0aac831",
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "codex-production-sonarqube",
+      "kind": "codex-mcp",
+      "package": "plugin",
+      "marketplace": ".agents/plugins/marketplace.json",
+      "plugin": "dotfiles",
+      "executable": "/nix/store/9ifcrbvdzh7x23whvi876d87rrxi6m4b-codex-0.155.1/bin/codex",
+      "server": "sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "regex",
+          "value": "\"structuredContent\":\\{\"languages\":\\[[^\\]]*\\{\"key\":\"py\",\"name\":\"Python\"\\}"
+        },
+        {
+          "type": "contains",
+          "value": "\"isError\":false"
+        }
+      ],
+      "disabledServers": ["chrome-devtools"]
+    },
+    {
+      "id": "claude-production-sonarqube",
+      "kind": "claude-mcp",
+      "package": "plugin",
+      "marketplace": ".claude-plugin/marketplace.json",
+      "plugin": "dotfiles",
+      "executable": "/nix/store/53vv7b2pb7xm2yyqmdlgqgdkv02v4vfj-claude-code-unwrapped-2.1.280/bin/claude",
+      "server": "sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "regex",
+          "value": "\"structuredContent\":\\{\"languages\":\\[[^\\]]*\\{\"key\":\"py\",\"name\":\"Python\"\\}"
+        }
+      ],
+      "disabledServers": ["chrome-devtools"]
+    },
+    {
+      "id": "opencode-production-sonarqube",
+      "kind": "opencode-mcp",
+      "package": "plugin",
+      "configuration": ".opencode/opencode.jsonc",
+      "executable": "/nix/store/j5aqada6pzi9m8qgxkpqd0a9pj18bgzh-opencode-1.18.32/bin/opencode",
+      "server": "plugin.dotfiles.sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "regex",
+          "value": "\"key\":\\s*\"py\",\\s*\"name\":\\s*\"Python\""
+        }
+      ],
+      "disabledServers": ["plugin.dotfiles.chrome-devtools"]
+    },
+    {
+      "id": "pi-production-sonarqube",
+      "kind": "pi-mcp",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "server": "dotfiles__sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "disabledServers": ["dotfiles__chrome-devtools"],
+      "assert": [
+        {
+          "type": "is-json"
+        },
+        {
+          "type": "contains",
+          "value": "\"isError\":false"
+        },
+        {
+          "type": "regex",
+          "value": "\"key\"\\s*:\\s*\"py\"\\s*,\\s*\"name\"\\s*:\\s*\"Python\""
+        }
+      ]
+    },
+    {
+      "package": "plugin",
+      "registration": ".hermes/plugins/dotfiles",
+      "python": "/nix/store/7nv87ahk1ll96dqdj1p31wf7al4n1z63-hermes-agent-env/bin/python3",
+      "id": "hermes-production-sonarqube",
+      "kind": "hermes-mcp",
+      "server": "sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "is-json"
+        },
+        {
+          "type": "regex",
+          "value": "\\\\\"key\\\\\"\\s*:\\s*\\\\\"py\\\\\",(?:\\s|\\\\n|\\\\r)*\\\\\"name\\\\\"\\s*:\\s*\\\\\"Python\\\\\""
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}
