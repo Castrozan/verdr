@@ -32,7 +32,7 @@ jobs:
           mkdir "$RUNNER_TEMP/codex"
           tar -xzf "$RUNNER_TEMP/codex.tar.gz" -C "$RUNNER_TEMP/codex"
           echo "VERDR_CODEX_EXECUTABLE=$RUNNER_TEMP/codex/bin/codex" >> "$GITHUB_ENV"
-      - name: Verify Codex and Claude native discovery without model credentials
+      - name: Verify native discovery and skill invocation without model credentials
         run: npm run test:native
       - run: node dist/cli.js run examples/standalone/suite.json --output results/standalone
       - uses: actions/upload-artifact@v4

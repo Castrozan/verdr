@@ -75,14 +75,12 @@ export const suiteSchema = z
         });
       identifiers.add(evaluation.id);
       if (
-        (evaluation.kind === "codex-discovery" ||
-          evaluation.kind === "claude-discovery" ||
-          evaluation.kind === "installed-identity") &&
+        "package" in evaluation &&
         !suite.artifact.packages.includes(evaluation.package)
       )
         context.addIssue({
           code: "custom",
-          message: "Native package must be a declared artifact package",
+          message: "Case package must be a declared artifact package",
           path: ["cases", index, "package"],
         });
     }
@@ -96,7 +94,7 @@ export const suiteSchema = z
       });
     for (const variable of suite.environment) {
       if (
-        /^(HOME|PATH|CODEX_HOME|CLAUDE_CONFIG_DIR|XDG_.*|PROMPTFOO_.*|NODE_.*|VERDR_.*)$/.test(
+        /^(HOME|PATH|CODEX_HOME|CLAUDE_CONFIG_DIR|XDG_.*|OPENCODE_.*|PI_AGENT_DIR|PI_CODING_AGENT_DIR|HERMES_.*|PROMPTFOO_.*|NODE_.*|VERDR_.*)$/.test(
           variable,
         )
       )

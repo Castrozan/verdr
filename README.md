@@ -2,7 +2,7 @@
 
 Evaluate the agent assets people actually install.
 
-Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, installed package identity, and native Codex and Claude Code discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
+Verdr consumes an emitted Agent Plugins package or bundle, checks its identity and required assets, and uses Promptfoo to evaluate emitted files, commands, injected instructions, installed package identity, and native Codex, Claude Code and OpenCode discovery. Every run produces JSON evidence and an HTML report. Missing assets, empty responses, timeouts, and modified artifacts fail the gate.
 
 ## Run
 
@@ -28,20 +28,24 @@ This fixture requires Codex and Claude Code with the native plugin APIs exercise
 
 `artifact.root` resolves relative to the suite file; `--artifact` overrides it relative to the caller's directory. Package roots and required assets are relative to that emitted root. The explicit required-file inventory can detect dropped resources; deriving it only from surviving output cannot.
 
-| Case kind            | Executes                                                                                              | Claim                                                                        |
-| -------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `file`               | Reads the exact emitted file and applies Promptfoo assertions.                                        | Asset content.                                                               |
-| `command`            | Runs a trusted program with argument arrays in a fresh workspace.                                     | Declared command outcome.                                                    |
-| `injected`           | Reads emitted instruction files and calls an existing Promptfoo provider.                             | Injected behavior; no native discovery claim.                                |
-| `installed-identity` | Reads a producer-supplied installed package root and compares its full tree with the emitted package. | Installed bytes and executable permissions; no discovery or execution claim. |
-| `codex-discovery`    | Installs an emitted marketplace with Codex and queries its native APIs.                               | Installed identity and discovery; no invocation or adherence claim.          |
-| `claude-discovery`   | Installs an emitted marketplace with Claude Code and queries the native session through its SDK.      | Installed identity and native discovery; no invocation or adherence claim.   |
+| Case kind            | Executes                                                                                              | Claim                                                                                 |
+| -------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `file`               | Reads the exact emitted file and applies Promptfoo assertions.                                        | Asset content.                                                                        |
+| `command`            | Runs a trusted program with argument arrays in a fresh workspace.                                     | Declared command outcome.                                                             |
+| `injected`           | Reads emitted instruction files and calls an existing Promptfoo provider.                             | Injected behavior; no native discovery claim.                                         |
+| `opencode-discovery` | Queries OpenCode with the emitted config file and filters skills by canonical package origin.         | Native skill discovery; no invocation claim.                                          |
+| `opencode-skill`     | Invokes a discovered skill through OpenCode’s native debug tool.                                      | Returned skill body and verified origin; no model adherence or agent-loop hook claim. |
+| `installed-identity` | Reads a producer-supplied installed package root and compares its full tree with the emitted package. | Installed bytes and executable permissions; no discovery or execution claim.          |
+| `codex-discovery`    | Installs an emitted marketplace with Codex and queries its native APIs.                               | Installed identity and discovery; no invocation or adherence claim.                   |
+| `claude-discovery`   | Installs an emitted marketplace with Claude Code and queries the native session through its SDK.      | Installed identity and native discovery; no invocation or adherence claim.            |
 
 `installed-identity` requires `package`, an absolute `installedRoot`, and `target` (`claude`, `codex`, `opencode`, `pi`, or `hermes`). It reads the existing installation without registering or repairing it. A root symlink may resolve to the emitted package; escaping links within a package fail containment. Corruption cannot fall back to another installed copy.
 
-Both native cases require `package`, `marketplace`, and `plugin`; `executable` defaults to `codex` or `claude`. The package must appear in `artifact.packages`. Claude consumes `.claude-plugin/marketplace.json` and the package's emitted `.claude-plugin/plugin.json`; Verdr does not generate either file. Use assertions on the expected namespaced components as well as the required-file inventory to detect components the native loader omits.
+Codex and Claude discovery cases require `package`, `marketplace`, and `plugin`; `executable` defaults to `codex` or `claude`. The package must appear in `artifact.packages`. Claude consumes `.claude-plugin/marketplace.json` and the package's emitted `.claude-plugin/plugin.json`; Verdr does not generate either file. Use assertions on the expected namespaced components as well as the required-file inventory to detect components the native loader omits.
 
 Claude can load a local marketplace package directly from its emitted directory even after caching it. Its evidence therefore distinguishes `installation` from `loading`, records both digests, and rejects an unexpected loaded root. The SDK probe submits no model prompt. MCP server statuses are observations, and a pending or listed server does not prove connectivity or tool execution. Hook execution is unmeasured. The baseline records native components visible before installation; system policy is inherited and not exhaustively enumerated.
+
+OpenCode cases require `package` and the emitted `configuration` path; `executable` defaults to `opencode`. The config must select its own skill paths: Verdr points `OPENCODE_CONFIG` at it without generating replacement config or loading sibling directories implicitly. The bundle must remain immutable. `opencode-skill` also requires `skill`; `agent` defaults to `build`. Assertions grade the native tool’s returned body, with discovery and origin evidence in metadata. The debug interface makes no model call, honors deny rules, and bypasses ordinary agent-loop hooks; it does not establish adherence. [Native interface](https://github.com/anomalyco/opencode/blob/v1.18.32/packages/opencode/src/cli/cmd/debug/agent.handler.ts).
 
 Command arguments accept `{artifact}`, `{profile}`, and `{workspace}`. They never run through a shell. Provider credentials must be explicitly named in the suite's `environment` array; values stay in the caller's environment. Reserved profile and Node configuration variables cannot be inherited. Suites and provider configuration are trusted executable inputs; fresh profiles are not a security sandbox.
 
@@ -58,9 +62,9 @@ npm test
 npm run test:native
 ```
 
-The native integration tests use Codex 0.155.1, selected through `VERDR_CODEX_EXECUTABLE` or `PATH`, and Claude Code 2.1.280, selected through `VERDR_CLAUDE_EXECUTABLE` or the pinned development dependency. They prove that valid ambient installations cannot rescue defective emitted assets. CI downloads the pinned Codex release with a checksum check and installs Claude through the public npm lockfile. Neither discovery test requires model credentials.
+The native integration tests use Codex 0.155.1, selected through `VERDR_CODEX_EXECUTABLE` or `PATH`, and Claude Code 2.1.280, selected through `VERDR_CLAUDE_EXECUTABLE` or the pinned development dependency. They prove that valid ambient installations cannot rescue defective emitted assets. CI downloads the pinned Codex release with a checksum check and installs Claude through the public npm lockfile. OpenCode 1.18.32 comes from the pinned public development dependency or `VERDR_OPENCODE_EXECUTABLE`. Its native controls distinguish successful discovery from denied invocation. These native tests require no model credentials.
 
-The runner does not yet import JUnit, coverage, mutation, or flake history; compare historical evidence; calibrate judges; run paired instruction experiments; or evaluate composed installations. Native runtime support covers Codex and Claude Code discovery. The HTML report states these limits instead of presenting an overall quality score.
+The runner does not yet import JUnit, coverage, mutation, or flake history; compare historical evidence; calibrate judges; run paired instruction experiments; or evaluate composed installations. Native runtime support covers Codex and Claude Code discovery, plus OpenCode discovery and skill invocation. The HTML report states these limits instead of presenting an overall quality score.
 
 - [Implementation plan](docs/implementation-plan.md)
 - [Generated artifact contract](docs/artifact-contract.md)
