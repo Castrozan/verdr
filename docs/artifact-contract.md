@@ -49,7 +49,7 @@ Optional targets can be omitted by policy, but reports retain the omitted scope.
 
 ## Initial producer integration
 
-The producer is the public dotfiles [plugin-distribution module](https://github.com/Castrozan/.dotfiles/tree/main/agent-harness/plugin-distribution). Its entrypoint is `agent-plugin-build SOURCE --output DESTINATION --target TARGET`, also exposed through a Nix `buildPlugin` function. Consume the CLI built from the same producer revision as the fixture; a previously installed CLI can implement an older contract.
+The producer is the public dotfiles [plugin-distribution module](https://github.com/Castrozan/.dotfiles/tree/1a86d9751472d9beb4b68b868b527544a6b78066/agent-harness/plugin-distribution), with the revised delivery contract published in [PR 153](https://github.com/Castrozan/.dotfiles/pull/153). Its entrypoint is `agent-plugin-build SOURCE --output DESTINATION --target TARGET`, also exposed through a Nix `buildPlugin` function. Consume the CLI built from the same producer revision as the fixture; a previously installed CLI can implement an older contract.
 
 The producer handoff defines `BUNDLE/plugin` as the canonical package entrypoint, resolving within the bundle to `.agents/plugins/NAME`. One invocation takes one already-resolved package. No targets means complete package delivery only; repeated target options add discovery adapters. Nix's default targets are Claude, Codex, OpenCode, Pi, and Hermes.
 
@@ -67,10 +67,12 @@ Generation warnings and doctor diagnostics are retained as evidence and do not a
 
 Installed native copies live outside the bundle. Capture their identity, effective configuration, loader version, and capability observations separately. The producer does not emit installation receipts; the evaluation invocation supplies this context through the actual deployment/loader path. Keep credentials and unrelated profile data out of records.
 
+An isolated user profile can still inherit system-managed instructions and hooks. Record the effective host configuration and distinguish package behavior from host behavior; a fresh home directory alone does not establish isolation.
+
 OpenCode embeds bundle paths and must consume the bundle in place. Its mutable plugin state is outside the bundle under the target profile's state directory. Each independent trial gets fresh state; persistence is exercised only by cases that declare it.
 
 Source identity for a local CLI input consists of manifest identity and source bytes unless the caller supplies a pinned source reference. Nix adds derivation/store identity and locked renderer dependencies. Verdr records these inputs without inventing a source URL or commit. Composition order, merging, conflict policy, installation, and rollback belong to deployment, not this single-package builder.
 
-The integration spike uses the producer's `__tests__/fixtures/portable-plugin` fixture, which includes client extension metadata as well as a skill, references, and an MCP resource. Consume its freshly emitted output in place, check the intended and observed inventory, exercise a real native loader, and prove that corrupting generated output is detected while the original source remains valid. The producer must supply its published revision and verification result before the spike treats the revised contract as available.
+The integration spike uses the producer's `__tests__/fixtures/portable-plugin` fixture, which includes client extension metadata as well as a skill, references, and an MCP server exposing the `distribution_echo` tool. Consume its freshly emitted output in place, check the intended and observed inventory, exercise a real native loader, and prove that corrupting generated output is detected while the original source remains valid. Check the producer's verification result for the pinned revision before the spike treats the revised contract as available.
 
 The CLI may orchestrate a consumer-supplied generation command later, but building, measuring, and publishing are separate actions. An evaluation must not publish a package as a side effect.
