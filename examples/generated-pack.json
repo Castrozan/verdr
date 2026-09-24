@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "name": "Generated distribution probe",
+  "artifact": {
+    "root": "./emitted",
+    "packages": ["plugin"],
+    "requiredFiles": [
+      { "path": "plugin/plugin.json" },
+      { "path": "plugin/skills/distribution-probe/SKILL.md" },
+      { "path": "plugin/skills/distribution-probe/references/expected.md" },
+      { "path": "plugin/com.openai/hooks.json" },
+      { "path": "plugin/mcp.json" },
+      { "path": ".agents/plugins/marketplace.json" }
+    ]
+  },
+  "cases": [
+    {
+      "id": "emitted-skill",
+      "kind": "file",
+      "path": "plugin/skills/distribution-probe/SKILL.md",
+      "assert": [{ "type": "contains", "value": "distribution_echo" }]
+    },
+    {
+      "id": "codex-native-discovery",
+      "kind": "codex-discovery",
+      "package": "plugin",
+      "marketplace": ".agents/plugins/marketplace.json",
+      "plugin": "distribution-probe",
+      "assert": [
+        { "type": "is-json" },
+        {
+          "type": "regex",
+          "value": "\"skills\":\\[\\{\"name\":\"distribution-probe"
+        },
+        { "type": "contains", "value": "Complete Package Probe" }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 ## Outcome
 
+The first executable slice is described in the [README](../README.md). The remaining phases below retain their original acceptance criteria; an artifact/discovery pass does not establish instruction effectiveness or conventional test quality.
+
 Evaluate the generated instructions, resources, configuration, and native installation that a user receives. Combine this evidence with conventional test outcomes, coverage, mutation results, and run history without merging unlike measurements into one quality score.
 
 The first consumer is the public dotfiles repository. A second, independent fixture repository must work without dotfiles paths, Nix, a marketplace service, or a hosted reporting service.

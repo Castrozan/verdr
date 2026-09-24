@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "Standalone emitted artifact",
+  "artifact": {
+    "root": "./emitted",
+    "packages": ["plugin"],
+    "requiredFiles": [{ "path": "plugin/result.txt" }]
+  },
+  "cases": [
+    {
+      "id": "emitted-resource",
+      "kind": "file",
+      "path": "plugin/result.txt",
+      "assert": [{ "type": "contains", "value": "survived generation" }]
+    },
+    {
+      "id": "opaque-extension",
+      "kind": "file",
+      "path": "plugin/plugin.json",
+      "assert": [{ "type": "contains", "value": "com.example.client" }]
+    },
+    {
+      "id": "promptfoo-provider",
+      "kind": "injected",
+      "instructionFiles": ["plugin/result.txt"],
+      "prompt": "Inspect the supplied resource.",
+      "provider": { "id": "echo" },
+      "assert": [{ "type": "contains", "value": "survived generation" }]
+    }
+  ]
+}

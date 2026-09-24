@@ -1,0 +1,32 @@
+{
+  "name": "verdr",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Evaluate the agent artifacts people actually install",
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "bin": {
+    "verdr": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:native": "node --import tsx --test test/native.integration.ts",
+    "check": "tsc --noEmit && prettier --check .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "promptfoo": "0.122.1",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.3",
+    "prettier": "3.9.7",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3"
+  }
+}

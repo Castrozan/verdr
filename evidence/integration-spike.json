@@ -1,0 +1,80 @@
+{
+  "kind": "selected-integration-observations",
+  "producer": "https://github.com/Castrozan/.dotfiles/commit/cc645e98857c21cd4ef689a38a81274d0585b237",
+  "collectedAt": "2026-09-24T01:58:30.478Z",
+  "engine": {
+    "name": "promptfoo",
+    "version": "0.122.1"
+  },
+  "harness": "codex-cli 0.155.1",
+  "positive": {
+    "runId": "f43e7d5c-ef2b-4cf2-9051-eeaea7c8633b",
+    "gate": "pass",
+    "summary": {
+      "expected": 2,
+      "pass": 2,
+      "fail": 0,
+      "error": 0,
+      "not-run": 0
+    },
+    "artifactBefore": "f51a1cdfa12f0c0f3537aa09c1e901881c7c6ef1ba0b4901d7ffe90d45452c7c",
+    "artifactAfter": "f51a1cdfa12f0c0f3537aa09c1e901881c7c6ef1ba0b4901d7ffe90d45452c7c",
+    "installedPackageDigest": "7c6346c414e088adbf956b1b35f415416740c3c9a373dde7f09963a19815c3ac",
+    "emittedPackageDigest": "7c6346c414e088adbf956b1b35f415416740c3c9a373dde7f09963a19815c3ac",
+    "nativeSkills": ["distribution-probe:distribution-probe"],
+    "packageHooksDiscovered": 0,
+    "cases": [
+      {
+        "id": "emitted-skill",
+        "kind": "file",
+        "status": "pass",
+        "reason": "All assertions passed",
+        "durationMs": 886
+      },
+      {
+        "id": "codex-native-discovery",
+        "kind": "codex-discovery",
+        "status": "pass",
+        "reason": "All assertions passed",
+        "durationMs": 2547
+      }
+    ]
+  },
+  "negative": {
+    "mutation": "Malformed YAML only in the emitted SKILL.md; original generated bundle unchanged",
+    "runId": "a7352940-16ed-457b-ae9a-067515bb57fd",
+    "gate": "fail",
+    "summary": {
+      "expected": 2,
+      "pass": 1,
+      "fail": 0,
+      "error": 1,
+      "not-run": 0
+    },
+    "artifactBefore": "400793c72a17f4fb6f86a7545690f40e51877cc29259e6046e9d49a5bc4516e4",
+    "artifactAfter": "400793c72a17f4fb6f86a7545690f40e51877cc29259e6046e9d49a5bc4516e4",
+    "cases": [
+      {
+        "id": "emitted-skill",
+        "kind": "file",
+        "status": "pass",
+        "reason": "All assertions passed",
+        "durationMs": 1529
+      },
+      {
+        "id": "codex-native-discovery",
+        "kind": "codex-discovery",
+        "status": "error",
+        "reason": "Native skill discovery reported loading errors",
+        "durationMs": 1977
+      }
+    ]
+  },
+  "limits": {
+    "modelCalls": 0,
+    "nativeScope": "discovery and installed identity",
+    "instructionEffectiveness": "unmeasured",
+    "systemPolicy": "inherited; separate from package behavior",
+    "projection": "Selected observations from raw local results; excludes host configuration and temporary profile paths"
+  }
+}
