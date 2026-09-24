@@ -1,0 +1,7 @@
+node_modules/
+dist/
+results/
+.deep-work/
+HEARTBEAT.md
+src/schemas/
+package-lock.json

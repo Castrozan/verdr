@@ -49,7 +49,7 @@ Optional targets can be omitted by policy, but reports retain the omitted scope.
 
 ## Initial producer integration
 
-The producer is the public dotfiles [plugin-distribution module](https://github.com/Castrozan/.dotfiles/tree/1a86d9751472d9beb4b68b868b527544a6b78066/agent-harness/plugin-distribution), with the revised delivery contract published in [PR 153](https://github.com/Castrozan/.dotfiles/pull/153). Its entrypoint is `agent-plugin-build SOURCE --output DESTINATION --target TARGET`, also exposed through a Nix `buildPlugin` function. Consume the CLI built from the same producer revision as the fixture; a previously installed CLI can implement an older contract.
+The producer is the public dotfiles [plugin-distribution module](https://github.com/Castrozan/.dotfiles/tree/cc645e98857c21cd4ef689a38a81274d0585b237/agent-harness/plugin-distribution). Its entrypoint is `agent-plugin-build SOURCE --output DESTINATION --target TARGET`, also exposed through a Nix `buildPlugin` function. Consume the CLI built from the same producer revision as the fixture; a previously installed CLI can implement an older contract.
 
 The producer handoff defines `BUNDLE/plugin` as the canonical package entrypoint, resolving within the bundle to `.agents/plugins/NAME`. One invocation takes one already-resolved package. No targets means complete package delivery only; repeated target options add discovery adapters. Nix's default targets are Claude, Codex, OpenCode, Pi, and Hermes.
 
