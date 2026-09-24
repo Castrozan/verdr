@@ -13,6 +13,22 @@ export function terminateProcess(child: ChildProcess, group = true): void {
   }
 }
 
+export async function closeProcess(child: ChildProcess): Promise<void> {
+  if (!child.pid || child.exitCode !== null || child.signalCode !== null)
+    return;
+  await new Promise<void>((resolve) => {
+    const shutdown = setTimeout(() => {
+      terminateProcess(child, false);
+      resolve();
+    }, 2000);
+    child.once("exit", () => {
+      clearTimeout(shutdown);
+      resolve();
+    });
+    child.stdin?.end();
+  });
+}
+
 export async function runProcess(
   command: string,
   args: string[],
