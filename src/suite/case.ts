@@ -39,6 +39,14 @@ const hermesFields = {
     .string()
     .refine(isAbsolute, "Expected an absolute Hermes interpreter"),
 };
+const piFields = {
+  ...caseFields,
+  package: relativeArtifactPath,
+  registration: relativeArtifactPath,
+  runtimeModules: z
+    .string()
+    .refine(isAbsolute, "Expected an absolute runtime modules directory"),
+};
 export const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({
@@ -115,27 +123,22 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       disabledServers: z.array(z.string().min(1)).max(100).default([]),
     })
     .strict(),
+  z.object({ ...piFields, kind: z.literal("pi-discovery") }).strict(),
   z
     .object({
-      ...caseFields,
-      kind: z.literal("pi-discovery"),
-      package: relativeArtifactPath,
-      registration: relativeArtifactPath,
-      runtimeModules: z
-        .string()
-        .refine(isAbsolute, "Expected an absolute runtime modules directory"),
+      ...piFields,
+      kind: z.literal("pi-skill"),
+      skill: z.string().min(1),
     })
     .strict(),
   z
     .object({
-      ...caseFields,
-      kind: z.literal("pi-skill"),
-      package: relativeArtifactPath,
-      registration: relativeArtifactPath,
-      runtimeModules: z
-        .string()
-        .refine(isAbsolute, "Expected an absolute runtime modules directory"),
-      skill: z.string().min(1),
+      ...piFields,
+      kind: z.literal("pi-mcp"),
+      server: z.string().min(1),
+      tool: z.string().min(1),
+      arguments: z.record(z.string(), z.unknown()).default({}),
+      disabledServers: z.array(z.string().min(1)).max(100).default([]),
     })
     .strict(),
   z.object({ ...hermesFields, kind: z.literal("hermes-discovery") }).strict(),

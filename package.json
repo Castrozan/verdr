@@ -30,6 +30,7 @@
     "@types/node": "22.20.3",
     "opencode-ai": "1.18.32",
     "pi-agent-plugins": "0.1.8",
+    "pi-mcp-adapter": "2.34.0",
     "prettier": "3.9.7",
     "tsx": "4.23.13",
     "typescript": "5.9.3"
