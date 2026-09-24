@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { StringDecoder } from "node:string_decoder";
-import { terminateProcess } from "../process.js";
+import { closeProcess } from "../process.js";
 import type { Suite } from "../suite/schema.js";
 
 export async function queryCodex<Result>(
@@ -21,6 +21,7 @@ export async function queryCodex<Result>(
   let bytes = 0;
   let identifier = 0;
   let failure: Error | undefined;
+  let closing = false;
   const pending = new Map<
     number,
     { resolve: (value: unknown) => void; reject: (error: Error) => void }
@@ -69,7 +70,9 @@ export async function queryCodex<Result>(
   });
   child.stderr.on("data", account);
   child.on("error", fail);
-  child.on("exit", () => fail(new Error("Codex protocol process exited")));
+  child.on("exit", () => {
+    if (!closing) fail(new Error("Codex protocol process exited"));
+  });
   child.stdin.on("error", fail);
   const request = (method: string, params: unknown): Promise<unknown> =>
     new Promise((resolve, reject) => {
@@ -86,19 +89,9 @@ export async function queryCodex<Result>(
     child.stdin.write(JSON.stringify({ method: "initialized" }) + "\n");
     return await query(request);
   } finally {
+    closing = true;
     clearTimeout(timer);
-    if (child.exitCode === null && child.signalCode === null) {
-      await new Promise<void>((resolve) => {
-        const shutdown = setTimeout(() => {
-          terminateProcess(child, false);
-          resolve();
-        }, 2000);
-        child.once("exit", () => {
-          clearTimeout(shutdown);
-          resolve();
-        });
-        child.stdin.end();
-      });
-    }
+    await closeProcess(child);
+    if (failure) throw failure;
   }
 }

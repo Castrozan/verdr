@@ -140,4 +140,14 @@ export const evaluationCase = z.discriminatedUnion("kind", [
       executable: z.string().default("claude"),
     })
     .strict(),
+  z
+    .object({
+      ...nativeFields,
+      kind: z.literal("claude-mcp"),
+      executable: z.string().default("claude"),
+      server: z.string().min(1),
+      tool: z.string().regex(/^[a-zA-Z0-9_-]+$/),
+      arguments: z.record(z.string(), z.unknown()).default({}),
+    })
+    .strict(),
 ]);

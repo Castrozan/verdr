@@ -31,7 +31,10 @@ for await (const line of createInterface({ input: process.stdin })) {
       readFileSync(new URL("behavior.json", import.meta.url), "utf8"),
     );
     result = {
-      structuredContent: { processId: process.pid },
+      structuredContent: {
+        processId: process.pid,
+        token: behavior.prefix + request.params.arguments.token,
+      },
       content: [
         {
           type: "text",

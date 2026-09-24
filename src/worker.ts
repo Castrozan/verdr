@@ -47,6 +47,10 @@ async function execute() {
     const { discoverClaudePlugin } = await import("./claude/discovery.js");
     return discoverClaudePlugin(evaluation, input);
   }
+  if (evaluation.kind === "claude-mcp") {
+    const { callClaudeTool } = await import("./claude/mcp.js");
+    return callClaudeTool(evaluation, input);
+  }
   if (
     evaluation.kind === "opencode-discovery" ||
     evaluation.kind === "opencode-skill"
