@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 built production bundle hermes skills",
+  "artifact": {
+    "root": "/nix/store/br6d3pqcig9d9lcaklk56sc1qfghv6g4-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "built-unpublished-activation-pending",
+      "producerVersion": "1.0.0+d38c500fa3e3",
+      "piRuntimeScope": "verified-system-selected-runtime-not-deployed",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "digest": "e66126ec18d1d21adb14f4b98771ea266ad0e5d081a7bd9d4ce3b248f0aac831",
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ]
+  },
+  "cases": [
+    {
+      "package": "plugin",
+      "registration": ".hermes/plugins/dotfiles",
+      "python": "/nix/store/7nv87ahk1ll96dqdj1p31wf7al4n1z63-hermes-agent-env/bin/python3",
+      "id": "hermes-production-discovery",
+      "kind": "hermes-discovery",
+      "assert": [
+        {
+          "type": "contains",
+          "value": ":agent-session\""
+        },
+        {
+          "type": "contains",
+          "value": ":architecture\""
+        },
+        {
+          "type": "contains",
+          "value": ":browser\""
+        },
+        {
+          "type": "contains",
+          "value": ":coding\""
+        },
+        {
+          "type": "contains",
+          "value": ":deep-work\""
+        },
+        {
+          "type": "contains",
+          "value": ":deliver\""
+        },
+        {
+          "type": "contains",
+          "value": ":devenv\""
+        },
+        {
+          "type": "contains",
+          "value": ":docs\""
+        },
+        {
+          "type": "contains",
+          "value": ":explore\""
+        },
+        {
+          "type": "contains",
+          "value": ":goal-prompt\""
+        },
+        {
+          "type": "contains",
+          "value": ":herdr\""
+        },
+        {
+          "type": "contains",
+          "value": ":humanize\""
+        },
+        {
+          "type": "contains",
+          "value": ":instructions\""
+        },
+        {
+          "type": "contains",
+          "value": ":orchestrate\""
+        },
+        {
+          "type": "contains",
+          "value": ":research\""
+        },
+        {
+          "type": "contains",
+          "value": ":review\""
+        },
+        {
+          "type": "contains",
+          "value": ":workspace\""
+        },
+        {
+          "type": "contains",
+          "value": ":core\""
+        },
+        {
+          "type": "contains",
+          "value": ":all-skills\""
+        }
+      ]
+    },
+    {
+      "package": "plugin",
+      "registration": ".hermes/plugins/dotfiles",
+      "python": "/nix/store/7nv87ahk1ll96dqdj1p31wf7al4n1z63-hermes-agent-env/bin/python3",
+      "id": "hermes-production-humanize",
+      "kind": "hermes-skill",
+      "skill": "humanize",
+      "assert": [
+        {
+          "type": "contains",
+          "value": "Reader understanding policy"
+        },
+        {
+          "type": "contains",
+          "value": "Source fidelity"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}

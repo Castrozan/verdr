@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-24 built production bundle pi skills",
+  "artifact": {
+    "root": "/nix/store/br6d3pqcig9d9lcaklk56sc1qfghv6g4-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "built-unpublished-activation-pending",
+      "producerVersion": "1.0.0+d38c500fa3e3",
+      "piRuntimeScope": "verified-system-selected-runtime-not-deployed",
+      "hermesSourceRevision": "d337b736aa1e8ebecfab043842d13e4a2d2f48a3"
+    },
+    "digest": "e66126ec18d1d21adb14f4b98771ea266ad0e5d081a7bd9d4ce3b248f0aac831",
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "pi-native-discovery",
+      "kind": "pi-discovery",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "assert": [
+        {
+          "type": "contains",
+          "value": "\"name\":\"agent-session\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"architecture\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"browser\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"coding\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"deep-work\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"deliver\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"devenv\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"docs\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"explore\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"goal-prompt\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"herdr\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"humanize\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"instructions\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"orchestrate\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"research\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"review\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"workspace\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"core\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"all-skills\""
+        }
+      ]
+    },
+    {
+      "id": "pi-native-expansion",
+      "kind": "pi-skill",
+      "package": "plugin",
+      "registration": ".pi/plugins/dotfiles",
+      "runtimeModules": "/nix/store/djlflw98ki3s41l20rs4hi8yliiv4qzh-dotfiles-pi-plugin-loaders-node-modules-0.0.0/node_modules",
+      "skill": "humanize",
+      "assert": [
+        {
+          "type": "contains",
+          "value": "### Reader understanding policy"
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}
