@@ -10,7 +10,9 @@
       { "path": "plugin/skills/distribution-probe/references/expected.md" },
       { "path": "plugin/com.openai/hooks.json" },
       { "path": "plugin/mcp.json" },
-      { "path": ".agents/plugins/marketplace.json" }
+      { "path": ".agents/plugins/marketplace.json" },
+      { "path": ".claude-plugin/marketplace.json" },
+      { "path": "plugin/.claude-plugin/plugin.json" }
     ]
   },
   "cases": [
@@ -33,6 +35,24 @@
           "value": "\"skills\":\\[\\{\"name\":\"distribution-probe"
         },
         { "type": "contains", "value": "Complete Package Probe" }
+      ]
+    },
+    {
+      "id": "claude-native-discovery",
+      "kind": "claude-discovery",
+      "package": "plugin",
+      "marketplace": ".claude-plugin/marketplace.json",
+      "plugin": "distribution-probe",
+      "assert": [
+        { "type": "is-json" },
+        {
+          "type": "contains",
+          "value": "\"name\":\"distribution-probe:distribution-probe\""
+        },
+        {
+          "type": "contains",
+          "value": "\"name\":\"plugin:distribution-probe:distribution-probe\""
+        }
       ]
     }
   ]

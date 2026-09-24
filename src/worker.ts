@@ -35,6 +35,10 @@ async function execute() {
     };
   if (evaluation.kind === "codex-discovery")
     return discoverCodexPlugin(evaluation, input);
+  if (evaluation.kind === "claude-discovery") {
+    const { discoverClaudePlugin } = await import("./claude/discovery.js");
+    return discoverClaudePlugin(evaluation, input);
+  }
   if (evaluation.kind === "command") {
     const result = await runProcess(
       expand(evaluation.command),

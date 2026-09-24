@@ -24,6 +24,12 @@ const caseFields = {
   id: z.string().min(1).max(128),
   assert: z.array(assertion).min(1),
 };
+const nativeFields = {
+  ...caseFields,
+  package: relativePath,
+  marketplace: relativePath,
+  plugin: z.string().min(1),
+};
 const evaluationCase = z.discriminatedUnion("kind", [
   z
     .object({ ...caseFields, kind: z.literal("file"), path: relativePath })
@@ -52,12 +58,16 @@ const evaluationCase = z.discriminatedUnion("kind", [
     .strict(),
   z
     .object({
-      ...caseFields,
+      ...nativeFields,
       kind: z.literal("codex-discovery"),
-      package: relativePath,
-      marketplace: relativePath,
-      plugin: z.string().min(1),
       executable: z.string().default("codex"),
+    })
+    .strict(),
+  z
+    .object({
+      ...nativeFields,
+      kind: z.literal("claude-discovery"),
+      executable: z.string().default("claude"),
     })
     .strict(),
 ]);
@@ -135,7 +145,8 @@ export const suiteSchema = z
         });
       identifiers.add(evaluation.id);
       if (
-        evaluation.kind === "codex-discovery" &&
+        (evaluation.kind === "codex-discovery" ||
+          evaluation.kind === "claude-discovery") &&
         !suite.artifact.packages.includes(evaluation.package)
       )
         context.addIssue({

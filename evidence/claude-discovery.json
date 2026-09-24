@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-24T02:27:36.649Z",
+  "producer": {
+    "repository": "https://github.com/Castrozan/.dotfiles",
+    "revision": "cc645e98857c21cd4ef689a38a81274d0585b237"
+  },
+  "engine": {
+    "name": "promptfoo",
+    "version": "0.122.1"
+  },
+  "harness": {
+    "name": "claude-code",
+    "version": "2.1.280 (Claude Code)",
+    "sdkVersion": "0.3.280"
+  },
+  "artifact": {
+    "digest": "f51a1cdfa12f0c0f3537aa09c1e901881c7c6ef1ba0b4901d7ffe90d45452c7c",
+    "unchanged": true
+  },
+  "package": {
+    "emittedDigest": "7c6346c414e088adbf956b1b35f415416740c3c9a373dde7f09963a19815c3ac",
+    "installedDigest": "7c6346c414e088adbf956b1b35f415416740c3c9a373dde7f09963a19815c3ac",
+    "loadedDigest": "7c6346c414e088adbf956b1b35f415416740c3c9a373dde7f09963a19815c3ac",
+    "loadedFrom": "emitted-package"
+  },
+  "observed": {
+    "commands": ["distribution-probe:distribution-probe"],
+    "agents": [],
+    "mcpServers": [
+      {
+        "name": "plugin:distribution-probe:distribution-probe",
+        "status": "pending"
+      }
+    ]
+  },
+  "positive": {
+    "scope": "Emitted skill, Codex discovery and Claude discovery",
+    "gate": "pass",
+    "summary": {
+      "expected": 3,
+      "pass": 3,
+      "fail": 0,
+      "error": 0,
+      "not-run": 0
+    }
+  },
+  "negative": {
+    "scope": "Emitted skill and Claude discovery",
+    "change": "Malformed only the emitted Claude native manifest in a temporary bundle copy",
+    "gate": "fail",
+    "summary": {
+      "expected": 2,
+      "pass": 1,
+      "fail": 0,
+      "error": 1,
+      "not-run": 0
+    },
+    "cases": [
+      {
+        "id": "emitted-skill",
+        "status": "pass"
+      },
+      {
+        "id": "claude-native-discovery",
+        "status": "error"
+      }
+    ]
+  },
+  "scope": "Native installation identity and session discovery",
+  "unmeasured": [
+    "model invocation",
+    "instruction adherence",
+    "task success",
+    "MCP tool invocation",
+    "hook execution"
+  ],
+  "nativeRegression": "The integration test separately proves a valid ambient installation cannot rescue a dropped emitted skill."
+}

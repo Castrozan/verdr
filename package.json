@@ -14,16 +14,18 @@
   "scripts": {
     "build": "tsc",
     "test": "node --import tsx --test test/*.test.ts",
-    "test:native": "node --import tsx --test test/native.integration.ts",
+    "test:native": "node --import tsx --test test/native.integration.ts test/claude.native.integration.ts",
     "check": "tsc --noEmit && prettier --check .",
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.280",
     "ajv": "8.20.0",
     "promptfoo": "0.122.1",
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@anthropic-ai/claude-code": "2.1.280",
     "@types/node": "22.20.3",
     "prettier": "3.9.7",
     "tsx": "4.23.13",
