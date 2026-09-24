@@ -48,6 +48,7 @@ test("Codex calls the installed MCP tool, rejects tool errors, and cannot use an
     behavior,
     JSON.stringify({ prefix: "native:", isError: false }),
   );
+  const startupMarker = join(root, "excluded-started");
   await writeFile(
     join(packageRoot, "mcp.json"),
     JSON.stringify({
@@ -57,6 +58,12 @@ test("Codex calls the installed MCP tool, rejects tool errors, and cannot use an
           type: "stdio",
           command: "node",
           args: ["${PLUGIN_ROOT}/server.mjs"],
+        },
+        excluded: {
+          type: "stdio",
+          command: "node",
+          args: ["${PLUGIN_ROOT}/server.mjs"],
+          env: { VERDR_TEST_MCP_STARTUP_FILE: startupMarker },
         },
       },
     }),
@@ -79,6 +86,7 @@ test("Codex calls the installed MCP tool, rejects tool errors, and cannot use an
         plugin: "verdr-mcp",
         executable,
         server: "probe",
+        disabledServers: ["excluded"],
         tool: "echo",
         arguments: { token: "verified" },
         assert: [
@@ -88,10 +96,22 @@ test("Codex calls the installed MCP tool, rejects tool errors, and cannot use an
       },
     ],
   };
+  const unrestricted = await runSuite(
+    { ...suite, cases: [{ ...suite.cases[0], disabledServers: [] }] },
+    join(root, "unrestricted"),
+  );
+  assert.equal(unrestricted.gate, "pass", JSON.stringify(unrestricted));
+  assert.equal(await readFile(startupMarker, "utf8"), "started");
+  await rm(startupMarker);
   const positive = await runSuite(suite, join(root, "positive"));
   assert.equal(positive.gate, "pass", JSON.stringify(positive));
+  await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   const raw = JSON.parse(
     await readFile(join(root, "positive/raw/0.json"), "utf8"),
+  );
+  assert.deepEqual(
+    raw.results[0].response.metadata.composition.disabledServers,
+    suite.cases[0]!.disabledServers,
   );
   const serverProcessId = JSON.parse(raw.results[0].response.output)
     .structuredContent.processId;
@@ -145,6 +165,7 @@ test("Codex calls the installed MCP tool, rejects tool errors, and cannot use an
     const corrupt = await runSuite(suite, join(root, "corrupt"));
     assert.equal(corrupt.gate, "fail");
     assert.match(corrupt.cases[0]!.reason, /unavailable|does not belong/);
+    await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   } finally {
     if (previousHome === undefined) delete process.env.CODEX_HOME;
     else process.env.CODEX_HOME = previousHome;

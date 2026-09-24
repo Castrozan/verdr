@@ -1,3 +1,5 @@
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import { z } from "zod";
 import { snapshotArtifact } from "../artifact.js";
 import type { EvaluationCase, Suite } from "../suite/schema.js";
@@ -22,6 +24,18 @@ export async function callClaudeTool(
   evaluation: Extract<EvaluationCase, { kind: "claude-mcp" }>,
   input: { root: string; workspace: string; limits: Suite["limits"] },
 ) {
+  if (evaluation.disabledServers.includes(evaluation.server))
+    throw new Error("Requested MCP server is disabled by the evaluation");
+  if (evaluation.disabledServers.length)
+    await writeFile(
+      join(process.env.CLAUDE_CONFIG_DIR!, "settings.json"),
+      JSON.stringify({
+        deniedMcpServers: evaluation.disabledServers.map((server) => ({
+          serverName: `plugin:${evaluation.plugin}:${server}`,
+        })),
+      }),
+      { flag: "wx", mode: 0o600 },
+    );
   const discovered = await discoverClaudePlugin(
     { ...evaluation, kind: "claude-discovery" },
     input,
@@ -97,6 +111,10 @@ export async function callClaudeTool(
       server: invoked.server,
       tool: evaluation.tool,
       execution: "claude-control-api",
+      composition: {
+        scope: "temporary-native-profile",
+        disabledServers: evaluation.disabledServers,
+      },
       mcpErrorHandling: "native-control-error",
       modelConsumption: "not-measured",
       adherence: "not-measured",

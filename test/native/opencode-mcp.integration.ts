@@ -36,9 +36,16 @@ test("OpenCode invokes the configured package MCP and rejects errors, corrupt se
     behavior,
     JSON.stringify({ prefix: "native:", isError: false }),
   );
+  const startupMarker = join(root, "excluded-started");
   const configuration = {
     $schema: "https://opencode.ai/config.json",
     mcp: {
+      "plugin.verdr.excluded": {
+        type: "local",
+        command: ["node", join(packageRoot, "server.mjs")],
+        cwd: packageRoot,
+        environment: { VERDR_TEST_MCP_STARTUP_FILE: startupMarker },
+      },
       "plugin.verdr.probe": {
         type: "local",
         command: ["node", join(packageRoot, "server.mjs")],
@@ -67,6 +74,7 @@ test("OpenCode invokes the configured package MCP and rejects errors, corrupt se
           process.env.VERDR_OPENCODE_EXECUTABLE ||
           resolve("node_modules/.bin/opencode"),
         server: "plugin.verdr.probe",
+        disabledServers: ["plugin.verdr.excluded"],
         tool: "echo",
         arguments: { token: "verified" },
         assert: [
@@ -76,8 +84,16 @@ test("OpenCode invokes the configured package MCP and rejects errors, corrupt se
       },
     ],
   };
+  const unrestricted = await runSuite(
+    { ...suite, cases: [{ ...suite.cases[0], disabledServers: [] }] },
+    join(root, "unrestricted"),
+  );
+  assert.equal(unrestricted.gate, "pass", JSON.stringify(unrestricted));
+  assert.equal(await readFile(startupMarker, "utf8"), "started");
+  await rm(startupMarker);
   const positive = await runSuite(suite, join(root, "positive"));
   assert.equal(positive.gate, "pass", JSON.stringify(positive));
+  await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   const raw = JSON.parse(
     await readFile(join(root, "positive/raw/0.json"), "utf8"),
   );
@@ -85,6 +101,10 @@ test("OpenCode invokes the configured package MCP and rejects errors, corrupt se
   assert.equal(
     raw.results[0].response.metadata.origin,
     "native-configuration-package-root",
+  );
+  assert.deepEqual(
+    raw.results[0].response.metadata.composition.disabledServers,
+    suite.cases[0]!.disabledServers,
   );
   const serverProcessId = JSON.parse(raw.results[0].response.output).processId;
   let serverSurvived = false;
@@ -134,6 +154,7 @@ test("OpenCode invokes the configured package MCP and rejects errors, corrupt se
       redirected.cases[0]!.reason,
       /does not bind the emitted package/,
     );
+    await assert.rejects(readFile(startupMarker), { code: "ENOENT" });
   } finally {
     if (previousConfig === undefined) delete process.env.OPENCODE_CONFIG;
     else process.env.OPENCODE_CONFIG = previousConfig;

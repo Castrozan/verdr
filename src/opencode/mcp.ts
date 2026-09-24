@@ -11,6 +11,8 @@ export async function callOpenCodeTool(
   evaluation: Extract<EvaluationCase, { kind: "opencode-mcp" }>,
   input: { root: string; workspace: string; limits: Suite["limits"] },
 ) {
+  if (evaluation.disabledServers.includes(evaluation.server))
+    throw new Error("Requested MCP server is disabled by the evaluation");
   const packageRoot = await containedPath(input.root, evaluation.package);
   const configuration = await containedPath(
     input.root,
@@ -22,6 +24,14 @@ export async function callOpenCodeTool(
       env: {
         ...process.env,
         OPENCODE_CONFIG: configuration,
+        OPENCODE_CONFIG_CONTENT: JSON.stringify({
+          mcp: Object.fromEntries(
+            evaluation.disabledServers.map((server) => [
+              server,
+              { enabled: false },
+            ]),
+          ),
+        }),
         OPENCODE_DISABLE_AUTOUPDATE: "1",
         OPENCODE_DISABLE_MODELS_FETCH: "1",
         OPENCODE_EXPERIMENTAL_CODE_MODE: "1",
@@ -124,6 +134,10 @@ export async function callOpenCodeTool(
       tool: evaluation.tool,
       calls,
       execution: "native-debug-code-mode",
+      composition: {
+        scope: "native-inline-configuration",
+        disabledServers: evaluation.disabledServers,
+      },
       mcpErrorHandling: "native-tool-error",
       modelConsumption: "not-measured",
       adherence: "not-measured",
