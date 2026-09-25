@@ -1,0 +1,163 @@
+{
+  "scope": "activated-narrow-opencode-wiring-retirement",
+  "producerRevision": "b22cb0176e1b005033c67f9af18f6787aebaf055",
+  "consumerImplementation": "81ed7063add21fb175bbb98d4ed723e17c1e16a9",
+  "system": "/nix/store/ykynqh0236kyx40xlyj2ad3yiipshbdz-darwin-system-25.11.ebec37a",
+  "bundle": "/nix/store/hc2r97gnk2abza4jv6377gbba177xjpr-agent-plugin-bundle",
+  "version": "1.0.0+04c828168fb5",
+  "identity": {
+    "bundle": {
+      "digest": "64283c1fa17650e64ac80cccd3bdc9e402a73dabd984968bf6ee915f3513838d",
+      "files": 418,
+      "bytes": 10645096
+    },
+    "package": {
+      "digest": "77abbff96354e2e52a403cb046a7e0c20555683e5db3ed9df797faf058335a32",
+      "files": 390,
+      "entries": 530,
+      "bytes": 10640261
+    },
+    "beforeAfterEqual": true
+  },
+  "sourcePreservation": {
+    "artifacts": 54,
+    "files": 383,
+    "bytes": 10632559,
+    "mismatches": 0
+  },
+  "actualInstalledIdentity": {
+    "passed": 5,
+    "total": 5,
+    "targets": ["claude", "codex", "opencode", "pi", "hermes"],
+    "filesPerPackage": 390,
+    "entriesPerPackage": 530
+  },
+  "nativeOpenCode": {
+    "version": "1.18.32",
+    "executable": "/nix/store/j5aqada6pzi9m8qgxkpqd0a9pj18bgzh-opencode-1.18.32/bin/opencode",
+    "declaredEnvironment": {
+      "OPENCODE_DISABLE_CLAUDE_CODE_SKILLS": "true"
+    },
+    "configuration": {
+      "preferences": {
+        "resolved": "/nix/store/286hy89qlyhrs5dw58108v1r674lqgrz-hm_.configopencodeopencode.json",
+        "sha256": "6aa69564de9ee524da05a550f4cf0ebdf5dee03c1a9209d4db8877ca3304e2a9"
+      },
+      "plugin": {
+        "resolved": "/nix/store/953vy3drp1xfc4gflzr9psq3n41x7sqp-opencode-plugin-settings.json",
+        "sha256": "9a843580de0f234125e7f523d56e3e79ea5caebcb7458ca7ab5d181173653cce"
+      },
+      "interactive": {
+        "resolved": "/nix/store/h55azgmpwsli2zhvdn7d0r8qr7srn0ca-opencode-interactive-session-config-overlay.json",
+        "sha256": "fecf348a34020f175f56ed67e20655ad866ca3d8c3ac7915b4175c1e0f512398"
+      },
+      "betha": {
+        "resolved": "/nix/store/q1m280zzcq19a8c52zq47k6gxsr8ldrd-opencode-workspace-profile-betha-config-overlay.json",
+        "sha256": "fecf348a34020f175f56ed67e20655ad866ca3d8c3ac7915b4175c1e0f512398"
+      }
+    },
+    "compositions": ["global", "interactive", "betha"],
+    "compositionsPassed": 3,
+    "basePreferencesPreserved": 8,
+    "timeoutMs": {
+      "plugin.dotfiles.chrome-devtools": 120000,
+      "plugin.dotfiles.sonarqube": 60000
+    },
+    "canonicalSkills": {
+      "passed": 21,
+      "total": 21,
+      "global": 19,
+      "repository": 2,
+      "extraBuiltins": ["customize-opencode"]
+    },
+    "skillOrigins": {
+      "agent-harness": "library/skills/agent-harness/SKILL.md",
+      "agent-session": "skills/agent-session/SKILL.md",
+      "all-skills": "skills/all-skills/SKILL.md",
+      "architecture": "skills/architecture/SKILL.md",
+      "browser": "skills/browser/SKILL.md",
+      "coding": "skills/coding/SKILL.md",
+      "core": "skills/core/SKILL.md",
+      "deep-work": "skills/deep-work/SKILL.md",
+      "deliver": "skills/deliver/SKILL.md",
+      "devenv": "skills/devenv/SKILL.md",
+      "docs": "skills/docs/SKILL.md",
+      "explore": "skills/explore/SKILL.md",
+      "goal-prompt": "skills/goal-prompt/SKILL.md",
+      "herdr": "skills/herdr/SKILL.md",
+      "humanize": "skills/humanize/SKILL.md",
+      "instructions": "skills/instructions/SKILL.md",
+      "nix": "library/skills/nix/SKILL.md",
+      "orchestrate": "skills/orchestrate/SKILL.md",
+      "research": "skills/research/SKILL.md",
+      "review": "skills/review/SKILL.md",
+      "workspace": "skills/workspace/SKILL.md"
+    },
+    "evaluationDisabledServers": [
+      "plugin.dotfiles.chrome-devtools",
+      "plugin.dotfiles.sonarqube"
+    ],
+    "network": "denied",
+    "childExecution": "only-native-opencode-and-git",
+    "writeBoundary": "five-native-profiles-and-dotfiles",
+    "inputsUnchanged": true,
+    "liveMcpCalls": 0
+  },
+  "isolatedMcp": {
+    "passed": 1,
+    "total": 1,
+    "server": "plugin.dotfiles.sonarqube",
+    "tool": "list_languages",
+    "arguments": {
+      "q": "python"
+    },
+    "pythonPresent": true,
+    "completedNativeCalls": 1,
+    "disabledServers": ["plugin.dotfiles.chrome-devtools"],
+    "errorHandling": "native-tool-error",
+    "origin": "native-configuration-package-root"
+  },
+  "reusedOwnedControls": {
+    "existingOpenCodeTests": {
+      "passed": 4,
+      "total": 4
+    },
+    "compositionChecks": {
+      "passed": 13,
+      "total": 13
+    }
+  },
+  "browserCalls": 0,
+  "modelCalls": 0,
+  "adherence": "not-measured",
+  "predecessorComparison": {
+    "producerRevision": "409fad3c9b461acb8789a2089595402556d7e41f",
+    "changedFiles": [
+      ".claude-plugin/plugin.json",
+      ".codex-plugin/plugin.json",
+      "artifact-inventory.json",
+      "plugin.json"
+    ],
+    "addedFiles": [],
+    "removedFiles": [],
+    "modeChanges": [],
+    "symlinkChanges": []
+  },
+  "evaluation": {
+    "runId": "6e7d44c1-6097-4f44-b06c-ca1a760602f0",
+    "startedAt": "2026-09-25T14:43:52.744Z",
+    "completedAt": "2026-09-25T14:44:15.879Z",
+    "suiteDigest": "ec328b3acad9a7595d18597de722d1f2249d38f7f2a933bd8bb4326000221c95",
+    "gate": "pass",
+    "casesPassed": 6,
+    "casesTotal": 6
+  },
+  "producerRetirementAccounting": {
+    "originalPaths": 818,
+    "presentPaths": 814,
+    "intentionalRetirementMappings": 4,
+    "retiredSourceFiles": 1,
+    "missingCurrentSourceFiles": 0,
+    "scope": "producer-receipt-inspected"
+  }
+}
