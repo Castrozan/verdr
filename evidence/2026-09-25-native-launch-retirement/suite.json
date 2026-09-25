@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "name": "2026-09-25 activated native plugin launch retirement",
+  "artifact": {
+    "root": "/nix/store/lm0sqf68pqbimfkzd9fsya1pphgixp77-agent-plugin-bundle",
+    "packages": ["plugin"],
+    "provenance": {
+      "status": "activated-producer-supplied-subject",
+      "producerVersion": "1.0.0+13756e8c5a80",
+      "producerRevision": "7feb0f675dcd6b2d8b0a8e446e265d900211d4f0",
+      "producerRepository": "https://github.com/Castrozan/.dotfiles"
+    },
+    "requiredFiles": [
+      {
+        "path": "plugin/mcp.json",
+        "sha256": "3bd2020894e801d824a02642db3aaaf6b8ace66e0d9a5128c5f9bcadeab47ac7",
+        "executable": false
+      }
+    ],
+    "digest": "89b89f2131da3bf33cfc69122515a52affa7b6fb009c9ae9167843d381316375"
+  },
+  "cases": [
+    {
+      "id": "claude-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.claude/plugins/cache/dotagents/dotfiles/1.0.0-13756e8c5a80",
+      "target": "claude",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "codex-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.codex/plugins/cache/dotagents-local/dotfiles/1.0.0+13756e8c5a80",
+      "target": "codex",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "opencode-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/nix/store/lm0sqf68pqbimfkzd9fsya1pphgixp77-agent-plugin-bundle/plugin",
+      "target": "opencode",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "pi-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.pi/agent/plugins/dotfiles",
+      "target": "pi",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "hermes-actual-installed-identity",
+      "kind": "installed-identity",
+      "package": "plugin",
+      "installedRoot": "/Users/lucas.zanoni/.hermes/plugins/dotfiles",
+      "target": "hermes",
+      "assert": [
+        {
+          "type": "is-json"
+        }
+      ]
+    },
+    {
+      "id": "opencode-production-sonarqube",
+      "kind": "opencode-mcp",
+      "package": "plugin",
+      "configuration": ".opencode/opencode.jsonc",
+      "executable": "/nix/store/j5aqada6pzi9m8qgxkpqd0a9pj18bgzh-opencode-1.18.32/bin/opencode",
+      "server": "plugin.dotfiles.sonarqube",
+      "tool": "list_languages",
+      "arguments": {
+        "q": "python"
+      },
+      "assert": [
+        {
+          "type": "regex",
+          "value": "\"key\":\\s*\"py\",\\s*\"name\":\\s*\"Python\""
+        }
+      ],
+      "disabledServers": ["plugin.dotfiles.chrome-devtools"]
+    }
+  ],
+  "limits": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 4194304
+  }
+}
